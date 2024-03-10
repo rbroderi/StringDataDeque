@@ -1,0 +1,47 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=67.0", "setuptools_scm[toml]>=7.1"]
+
+[project]
+authors = [{"name" = "R.Broderick"}]
+description = "Useful when building a string from data that can be converted into a string, in parts."
+dynamic = ["version"]
+license = {"file" = "LICENSE"}
+name = "stringdatadeque"
+readme = {file = "README.md", content-type = "text/markdown"}
+dependencies = [
+  "pydantic~=2.0",
+  "pydantic-settings"
+]
+
+[project.optional-dependencies]
+dev = [
+  "build",
+  "dapperdata",
+  "glom",
+  "mypy",
+  "pytest",
+  "pytest-cov",
+  "pytest-pretty",
+  "ruamel.yaml",
+  "ruff",
+  "toml-sort",
+  "uv"
+]
+
+[tool.ruff]
+exclude = [".venv", "./stringdatadeque/_version.py"]
+line-length = 120
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.md"]}
+
+[tool.setuptools.package-data]
+stringdatadeque = ["py.typed"]
+
+[tool.setuptools.packages]
+find = {}
+
+[tool.setuptools_scm]
+fallback_version = "0.0.0-dev"
+write_to = "stringdatadeque/_version.py"
