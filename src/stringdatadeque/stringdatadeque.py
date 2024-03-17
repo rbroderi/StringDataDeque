@@ -3,22 +3,19 @@
 from collections import deque
 from collections.abc import Callable
 from collections.abc import Sequence
-from typing import Any
 from typing import Generic
 from typing import Self
 from typing import SupportsIndex
 from typing import TypeVar
 from typing import cast
-from typing import get_args
 from typing import overload
 
 from beartype import beartype  # pyright: ignore[reportUnknownVariableType]
 from beartype.door import is_bearable  # pyright: ignore[reportUnknownVariableType]
 
 from .protocols import Builtin_or_DefinesDunderStr
-from .protocols import NonRecursiveSequence
+from .protocols import SequenceNonStr
 from .protocols import SequenceNonstrOfStr
-from .protocols import is_NonRecursiveSequence
 
 T = TypeVar("T")
 DataType = TypeVar("DataType")
@@ -33,14 +30,10 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         self,
         convert_func: Callable[[ConvertibleToDataType], DataType],
         format_func: Callable[[DataType], str],
-        data: NonRecursiveSequence[ConvertibleToDataType]
-        | ConvertibleToDataType
-        | None = None,
+        data: Sequence[ConvertibleToDataType] | ConvertibleToDataType | None = None,
         sep: str = "",
     ) -> None:
         """Initialize the StringDataDeque."""
-        # TODO is this the best way?
-        self._DataType, self._ConvertibleToDataType = get_args(self.__orig_bases__[0])  # type: ignore
         self._data: deque[DataType] = deque()
         self.convert_func = convert_func
         self.format_func = format_func
@@ -54,7 +47,6 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
 
     def __add__(self, other: ConvertibleToDataType) -> Self:
         """Add obj to the StringDataDeque."""
-        # self._data.append(self.convert_func(other))
         self.insert(other)
         return self
 
@@ -72,13 +64,13 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
     #     self._data.extend(map(self.convert_func, other))
     #     return self
 
-    def __ror__(self, other: NonRecursiveSequence[ConvertibleToDataType]) -> Self:
+    def __ror__(self, other: SequenceNonStr[ConvertibleToDataType]) -> Self:
         """Right or."""
         # self._data.extend(map(self.convert_func, other))
         self.insert(other)
         return self
 
-    def __ior__(self, other: NonRecursiveSequence[ConvertibleToDataType]) -> Self:
+    def __ior__(self, other: SequenceNonStr[ConvertibleToDataType]) -> Self:
         """Define |=."""
         return self.__ror__(other)
 
@@ -94,90 +86,89 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         """Set item at index."""
         self._data[key] = self.convert_func(value)
 
-    def _check_insert_no_convert_types(
-        self, other: Any
-    ) -> Sequence[DataType] | Sequence[ConvertibleToDataType]:
-        if is_bearable(other, Sequence[self._DataType]) or is_bearable(
-            other, Sequence[self._ConvertibleToDataType]
-        ):
-            return other
-        msg = (
-            "if func is None other must be of type: "
-            "Sequence[DataType]|"
-            "Sequence[ConvertibleToDataType]|"
-            "DataType|"
-            "ConvertibleToDataType"
-            f" got {type(other)}"
-        )
-        raise TypeError(msg)
-
     @overload
     def insert(
         self,
-        other: Sequence[DataType] | Sequence[ConvertibleToDataType],
+        other: SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType,
         /,
-        func: None = None,
+        pre_process_func: Callable[[ConvertibleToDataType], ConvertibleToDataType]
+        | None = None,
+        skip_conversion: bool = False,
     ) -> Self: ...
 
     @overload
     def insert(
         self,
-        other: NonRecursiveSequence[DataType]
-        | NonRecursiveSequence[ConvertibleToDataType],
+        other: SequenceNonStr[DataType] | DataType,
         /,
-        func: None = None,
+        pre_process_func: Callable[[DataType], DataType] | None = None,
+        skip_conversion: bool = True,
     ) -> Self: ...
 
     @overload
     def insert(
         self,
-        other: DataType | ConvertibleToDataType,
+        other: SequenceNonStr[T] | T,
         /,
-        func: None = None,
-    ) -> Self: ...
-
-    @overload
-    def insert(
-        self,
-        other: Sequence[T],
-        /,
-        func: Callable[[T], ConvertibleToDataType],
-    ) -> Self: ...
-
-    @overload
-    def insert(
-        self,
-        other: T,
-        /,
-        func: Callable[[T], ConvertibleToDataType],
+        pre_process_func: Callable[[T], ConvertibleToDataType] | None = None,
+        skip_conversion: bool = False,
     ) -> Self: ...
 
     def insert(
         self,
-        other: NonRecursiveSequence[DataType]
-        | NonRecursiveSequence[ConvertibleToDataType]
-        | Sequence[DataType]
-        | Sequence[ConvertibleToDataType]
-        | DataType
+        other: SequenceNonStr[T]
+        | T
+        | SequenceNonStr[ConvertibleToDataType]
         | ConvertibleToDataType
-        | Sequence[T]
-        | T,
-        /,
-        func: Callable[[T], ConvertibleToDataType] | None = None,
+        | SequenceNonStr[DataType]
+        | DataType,
+        pre_process_func: Callable[[ConvertibleToDataType], ConvertibleToDataType]
+        | Callable[[DataType], ConvertibleToDataType]
+        | Callable[[T], ConvertibleToDataType]
+        | None = None,
+        skip_conversion: bool = False,
     ) -> Self:
-        """Insert the other object into the StringDataDeque optionally applying func."""
-        if not is_NonRecursiveSequence(other):
-            other = (other,)  # type: ignore
-        if func is None:
-            data = self._check_insert_no_convert_types(other)
-        else:
-            other = cast(Sequence[T], other)
-            data = list(map(func, other))
-        if is_bearable(data, Sequence[ConvertibleToDataType]):
-            data = cast(Sequence[ConvertibleToDataType], data)
-            data = list(map(self.convert_func, data))
-        else:
-            data = cast(Sequence[DataType], other)
+        if pre_process_func is None and skip_conversion:
+            is_bearable(other, Sequence[DataType] | DataType)
+            other = cast(Sequence[DataType] | DataType, other)
+            return self._insert_no_pre_or_conv(other)
+        if pre_process_func is None:
+            is_bearable(other, Sequence[ConvertibleToDataType] | ConvertibleToDataType)
+            other = cast(Sequence[ConvertibleToDataType] | ConvertibleToDataType, other)
+            return self._insert_no_pre(other)
+        data = cast(Sequence[T] | T, other)
+        pre_process_func = cast(Callable[[T], ConvertibleToDataType], pre_process_func)
+        return self._insert(data, pre_process_func)
+
+    def _insert(
+        self,
+        other: Sequence[T] | T,
+        pre_process_func: Callable[[T], ConvertibleToDataType],
+    ) -> Self:
+        data = other
+        if not isinstance(other, Sequence) or isinstance(other, str):
+            data = (other,)
+        data = cast(Sequence[T], data)
+        data = tuple(map(pre_process_func, data))
+        self._insert_no_pre(data)
+        return self
+
+    def _insert_no_pre(
+        self, other: Sequence[ConvertibleToDataType] | ConvertibleToDataType
+    ) -> Self:
+        data = other
+        if not isinstance(other, Sequence) or isinstance(other, str):
+            data = (other,)
+        data = cast(Sequence[ConvertibleToDataType], data)
+        data = tuple(map(self.convert_func, data))
+        self._insert_no_pre_or_conv(data)
+        return self
+
+    def _insert_no_pre_or_conv(self, other: Sequence[DataType] | DataType) -> Self:
+        data = other
+        if not isinstance(other, Sequence) or isinstance(other, str):
+            data = (other,)
+        data = cast(Sequence[DataType], data)
         self._data.extend(data)
         return self
 

@@ -11,8 +11,6 @@ from stringdatadeque import CircularStringDeque
 from stringdatadeque import StringDataDeque
 from stringdatadeque import StringDeque
 from stringdatadeque import WORMStringDeque
-from stringdatadeque.protocols import is_RecursiveSequence
-from stringdatadeque.protocols import x_is_sequence_of_x
 
 
 def create_stringdeque():
@@ -229,21 +227,11 @@ def testCircularStringDeque():
     assert test[-1] == "4"
 
 
-def test_is_RecursiveSequence():
-    assert is_RecursiveSequence("test") is True
-    assert is_RecursiveSequence([1]) is False
-
-
-def test_x_is_Sequence_of_x():
-    assert x_is_sequence_of_x(1) is False
-    assert x_is_sequence_of_x("test") is True
-
-
 def test_init_datatype():
     class Fail:
         pass
 
-    temp = StringDataDeque[None, None](data="test", convert_func=str, format_func=str)
+    StringDataDeque[None, None](data="test", convert_func=str, format_func=str)
 
 
 def test_WORMStringDeque_not_implemented():
