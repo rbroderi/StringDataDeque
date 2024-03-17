@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-PACKAGE_SLUG=stringdatadeque
+PACKAGE_SLUG=src/stringdatadeque
 ifdef CI
 	PYTHON_PYENV :=
 	PYTHON_VERSION := $(shell python --version|cut -d" " -f2)
@@ -54,11 +54,15 @@ pre-commit:
 # Formatting
 #
 .PHONY: chores
-chores: ruff_fixes black_fixes dapperdata_fixes tomlsort_fixes
+chores: validate_pyproject ruff_fixes black_fixes dapperdata_fixes tomlsort_fixes
+
+.PHONY: validate pyproject
+validate_pyproject:
+	$(PYTHON) -m validate_pyproject pyproject.toml
 
 .PHONY: ruff_fixes
 ruff_fixes:
-	$(PYTHON) -m ruff . --fix
+	$(PYTHON) -m ruff check . --fix
 
 .PHONY: black_fixes
 black_fixes:
@@ -81,6 +85,10 @@ tests: install pytest ruff_check black_check mypy_check dapperdata_check tomlsor
 .PHONY: pytest
 pytest:
 	$(PYTHON) -m pytest --cov=./${PACKAGE_SLUG} --cov-report=term-missing tests
+
+.PHONY: pytestvv
+pytestvv:
+	$(PYTHON) -m pytest -vv --cov=./${PACKAGE_SLUG} --cov-report=term-missing tests
 
 .PHONY: pytest_loud
 pytest_loud:
@@ -111,8 +119,8 @@ tomlsort_check:
 
 .PHONY: rebuild_dependencies
 rebuild_dependencies:
-	$(PYTHON) -m uv compile --output-file=requirements.txt pyproject.toml
-	$(PYTHON) -m uv compile --output-file=requirements-dev.txt --extra=dev pyproject.toml
+	$(PYTHON) -m uv pip compile --output-file=requirements.txt pyproject.toml
+	$(PYTHON) -m uv pip compile --output-file=requirements-dev.txt --extra=dev pyproject.toml
 
 .PHONY: dependencies
 dependencies: requirements.txt requirements-dev.txt

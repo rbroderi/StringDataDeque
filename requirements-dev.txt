@@ -16,6 +16,8 @@ coverage==7.4.3
 dapperdata==0.4.0
 face==20.1.1
     # via glom
+fastjsonschema==2.19.1
+    # via validate-pyproject
 glom==23.5.0
 iniconfig==2.0.0
     # via pytest
@@ -71,3 +73,4 @@ typing-extensions==4.10.0
     #   pydantic-core
     #   typer
 uv==0.1.16
+validate-pyproject==0.16
