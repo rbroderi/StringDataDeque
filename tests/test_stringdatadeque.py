@@ -175,6 +175,15 @@ class Test_For_all:
             stringdeque.insert(Fail(), func=None)
         assert str(stringdeque) == "test"
 
+    @staticmethod
+    def test_insert_no_pre_or_conv(stringdeque_func):
+        stringdeque = stringdeque_func()
+        print(stringdeque)
+        stringdeque.insert([1, 2], pre_process_func=None, skip_conversion=True)
+        stringdeque.insert(1, pre_process_func=None, skip_conversion=True)
+        stringdeque.insert(1, pre_process_func=str, skip_conversion=False)
+        assert stringdeque[0] == 1
+
 
 # def test_or(stringdeque):
 #     stringdeque = stringdeque | ["Line1", "Line2"]
@@ -212,10 +221,6 @@ def test_clear(stringdeque):
     stringdeque.clear()
     assert len(stringdeque) == 0
     assert str(stringdeque) == ""
-
-
-def test_init_alt_paths():
-    pass
 
 
 def testCircularStringDeque():

@@ -2,7 +2,6 @@
 
 from collections import deque
 from collections.abc import Callable
-from collections.abc import Sequence
 from typing import Generic
 from typing import Self
 from typing import SupportsIndex
@@ -30,7 +29,9 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         self,
         convert_func: Callable[[ConvertibleToDataType], DataType],
         format_func: Callable[[DataType], str],
-        data: Sequence[ConvertibleToDataType] | ConvertibleToDataType | None = None,
+        data: SequenceNonStr[ConvertibleToDataType]
+        | ConvertibleToDataType
+        | None = None,
         sep: str = "",
     ) -> None:
         """Initialize the StringDataDeque."""
@@ -129,46 +130,52 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         skip_conversion: bool = False,
     ) -> Self:
         if pre_process_func is None and skip_conversion:
-            is_bearable(other, Sequence[DataType] | DataType)
-            other = cast(Sequence[DataType] | DataType, other)
+            is_bearable(other, SequenceNonStr[DataType] | DataType)
+            other = cast(SequenceNonStr[DataType] | DataType, other)
             return self._insert_no_pre_or_conv(other)
         if pre_process_func is None:
-            is_bearable(other, Sequence[ConvertibleToDataType] | ConvertibleToDataType)
-            other = cast(Sequence[ConvertibleToDataType] | ConvertibleToDataType, other)
+            is_bearable(
+                other, SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType
+            )
+            other = cast(
+                SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType, other
+            )
             return self._insert_no_pre(other)
-        data = cast(Sequence[T] | T, other)
+        data = cast(SequenceNonStr[T] | T, other)
         pre_process_func = cast(Callable[[T], ConvertibleToDataType], pre_process_func)
         return self._insert(data, pre_process_func)
 
     def _insert(
         self,
-        other: Sequence[T] | T,
+        other: SequenceNonStr[T] | T,
         pre_process_func: Callable[[T], ConvertibleToDataType],
     ) -> Self:
         data = other
-        if not isinstance(other, Sequence) or isinstance(other, str):
+        if not is_bearable(other, SequenceNonStr):
             data = (other,)
-        data = cast(Sequence[T], data)
+        data = cast(SequenceNonStr[T], data)
         data = tuple(map(pre_process_func, data))
         self._insert_no_pre(data)
         return self
 
     def _insert_no_pre(
-        self, other: Sequence[ConvertibleToDataType] | ConvertibleToDataType
+        self, other: SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType
     ) -> Self:
         data = other
-        if not isinstance(other, Sequence) or isinstance(other, str):
+        if not is_bearable(other, SequenceNonStr):
             data = (other,)
-        data = cast(Sequence[ConvertibleToDataType], data)
+        data = cast(SequenceNonStr[ConvertibleToDataType], data)
         data = tuple(map(self.convert_func, data))
         self._insert_no_pre_or_conv(data)
         return self
 
-    def _insert_no_pre_or_conv(self, other: Sequence[DataType] | DataType) -> Self:
+    def _insert_no_pre_or_conv(
+        self, other: SequenceNonStr[DataType] | DataType
+    ) -> Self:
         data = other
-        if not isinstance(other, Sequence) or isinstance(other, str):
+        if not is_bearable(other, SequenceNonStr):
             data = (other,)
-        data = cast(Sequence[DataType], data)
+        data = cast(SequenceNonStr[DataType], data)
         self._data.extend(data)
         return self
 
