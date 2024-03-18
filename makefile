@@ -121,9 +121,10 @@ tomlsort_check:
 rebuild_dependencies:
 	$(PYTHON) -m uv pip compile --output-file=requirements.txt pyproject.toml
 	$(PYTHON) -m uv pip compile --output-file=requirements-dev.txt --extra=dev pyproject.toml
+	$(PYTHON) -m uv pip compile --output-file=requirements-optional.txt --extra=optional pyproject.toml
 
 .PHONY: dependencies
-dependencies: requirements.txt requirements-dev.txt
+dependencies: requirements.txt requirements-dev.txt requirements-optional.txt
 
 requirements.txt: $(PACKAGE_CHECK) pyproject.toml
 	$(PYTHON) -m uv pip compile --upgrade --output-file=requirements.txt pyproject.toml
@@ -131,6 +132,8 @@ requirements.txt: $(PACKAGE_CHECK) pyproject.toml
 requirements-dev.txt: $(PACKAGE_CHECK) pyproject.toml
 	$(PYTHON) -m uv pip compile --upgrade --output-file=requirements-dev.txt --extra=dev pyproject.toml
 
+requirements-optional.txt: $(PACKAGE_CHECK) pyproject.toml
+	$(PYTHON) -m uv pip compile --upgrade --output-file=requirements-optional.txt --extra=optional pyproject.toml
 
 
 #
