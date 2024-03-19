@@ -8,7 +8,6 @@ from contextlib import nullcontext as does_not_raise
 import pytest
 from beartype.roar import BeartypeCallHintParamViolation
 from stringdatadeque import CircularStringDeque
-from stringdatadeque import StringDataDeque
 from stringdatadeque import StringDeque
 from stringdatadeque import WORMStringDeque
 
@@ -247,13 +246,6 @@ def testCircularStringDeque():
     test += [3, 4]
     assert len(test) == 3
     assert test[-1] == "4"
-
-
-def test_init_datatype():
-    class Fail:
-        pass
-
-    StringDataDeque[None, None](data="test", convert_func=str, format_func=str)
 
 
 def test_WORMStringDeque_not_implemented():
