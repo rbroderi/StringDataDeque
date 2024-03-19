@@ -1,5 +1,6 @@
 """Holds StringDeque class as well as several implementations of it."""
 
+import sys
 from collections import deque
 from collections.abc import Callable
 from typing import Generic
@@ -19,6 +20,24 @@ from .protocols import SequenceNonstrOfStr
 T = TypeVar("T")
 DataType = TypeVar("DataType")
 ConvertibleToDataType = TypeVar("ConvertibleToDataType")
+# for current func name, specify 0 or no argument.
+# for name of caller of current func, specify 1.
+# for name of caller of caller of current func, specify 2. etc.
+currentFuncName = lambda n=0: sys._getframe(n + 1).f_code.co_name  # pyright: ignore[reportPrivateUsage]  # noqa: E731
+
+# import re
+
+# class REqual(str):
+#     "Override str.__eq__ to match a regex pattern."
+#     def __eq__(self, pattern):
+#         return re.fullmatch(pattern, self)
+
+
+class LikeMatch(str):
+    # override str.__eq__ to match if pattern in string
+    def __eq__(self, pattern: object) -> bool:
+        pattern = cast(str, pattern)
+        return pattern in self
 
 
 @beartype
@@ -45,6 +64,19 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
     def __str__(self) -> str:
         """Return string joined by sep."""
         return self.sep.join(map(self.format_func, self._data))
+
+    def __format__(self, format_spec: str) -> str:
+        match LikeMatch(format_spec):
+            case "sep=":
+                old_sep, self.sep = (
+                    self.sep,
+                    format_spec.partition("sep=")[2].strip("'\""),
+                )
+                ret = str(self)
+                self.sep = old_sep
+                return ret
+            case _:
+                return str(self).__format__(format_spec)
 
     def __add__(self, other: ConvertibleToDataType) -> Self:
         """Add obj to the StringDataDeque."""
@@ -228,7 +260,7 @@ class WORMStringDeque(StringDeque):
     def __init__(
         self, data: SequenceNonstrOfStr | str | None = None, sep: str = ""
     ) -> None:
-        """Initialize the StringDeque."""
+        """Initialize the WORMStringDeque"""
         super().__init__(data=data, sep=sep)
 
     def __setitem__(
@@ -237,14 +269,20 @@ class WORMStringDeque(StringDeque):
         value: Builtin_or_DefinesDunderStr,
     ) -> None:
         """Set item at index."""
-        msg = f"{self.__class__.__qualname__} does not implement setitem"
+        msg = f"{self.__class__.__qualname__} does not implement {currentFuncName()}"
         raise NotImplementedError(
             msg,
         )
 
     def clear(self) -> None:
-        """Clear StringDeque."""
-        msg = f"{self.__class__.__qualname__} does not implement clear"
+        """Clear not implemented."""
+        msg = f"{self.__class__.__qualname__} does not implement {currentFuncName()}"
+        raise NotImplementedError(
+            msg,
+        )
+
+    def __delitem__(self, key: SupportsIndex) -> None:
+        msg = f"{self.__class__.__qualname__} does not implement {currentFuncName()}"
         raise NotImplementedError(
             msg,
         )
@@ -258,24 +296,3 @@ class WORMStringDeque(StringDeque):
 #     else:
 #         module = sys.modules[module_name]
 #     return module
-
-
-# ############################
-# test = CircularStringDeque(size=5, data="Circle", sep=",")
-# test.insert(["test"])
-# test = test + 1
-# test.insert(2, lambda x: str(x + 1))
-# test.insert([1, 2, "f"], lambda x: str(x))
-# test = "3" + test
-# test += 10
-# test = [1, 2, 3] | test
-# test = test | [3, 2, "1"]
-# test |= ["end"]
-# test[1] = "new"
-# print(test)
-# print(test[0])
-# test2 = WORMBuffer(["a", "b", "c", "d"], sep=",")
-# print(test2)
-
-
-# # print(ROWMBuffer()._decrypt(msg, private_key))

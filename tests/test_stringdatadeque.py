@@ -178,11 +178,28 @@ class Test_For_all:
     @staticmethod
     def test_insert_no_pre_or_conv(stringdeque_func):
         stringdeque = stringdeque_func()
-        print(stringdeque)
         stringdeque.insert([1, 2], pre_process_func=None, skip_conversion=True)
         stringdeque.insert(1, pre_process_func=None, skip_conversion=True)
         stringdeque.insert(1, pre_process_func=str, skip_conversion=False)
         assert stringdeque[0] == 1
+
+    @staticmethod
+    def test_str_format(stringdeque_func):
+        stringdeque = stringdeque_func()
+        stringdeque.sep = "!"
+        stringdeque |= [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+        assert f"{stringdeque:sep='\n'}" == textwrap.dedent("""\
+            1
+            2
+            3
+            4
+            5
+            6
+            7
+            8
+            9
+            0""")
+        assert f"{stringdeque:>24}" == "     1!2!3!4!5!6!7!8!9!0"
 
 
 # def test_or(stringdeque):
@@ -245,3 +262,5 @@ def test_WORMStringDeque_not_implemented():
         temp[0] = "should not work"
     with pytest.raises(NotImplementedError):
         temp.clear()
+    with pytest.raises(NotImplementedError):
+        del temp[0]
