@@ -30,7 +30,7 @@ PYTHON_DEPS := $(PACKAGE_CHECK)
 all: $(PACKAGE_CHECK)
 
 .PHONY: install
-install: echo "$(PYTHON_PYENV) $(PYTHON_VENV) pip"
+install: $(PYTHON_PYENV) $(PYTHON_VENV) pip
 
 .venv:
 	python -m venv .venv
