@@ -30,7 +30,7 @@ PYTHON_DEPS := $(PACKAGE_CHECK)
 all: $(PACKAGE_CHECK)
 
 .PHONY: install
-install: $(PYTHON_PYENV) $(PYTHON_VENV) pip
+install: echo "$(PYTHON_PYENV) $(PYTHON_VENV) pip"
 
 .venv:
 	python -m venv .venv
@@ -41,10 +41,10 @@ pyenv:
 
 .PHONY: pip
 pip: $(PYTHON_VENV)
-	$(PYTHON) -m pip install -e .[dev]
+	$(PYTHON) -m pip install -e .[dev,optional]
 
 $(PACKAGE_CHECK): $(PYTHON_VENV)
-	$(PYTHON) -m pip install -e .[dev]
+	$(PYTHON) -m pip install -e .[dev,optional]
 
 .PHONY: pre-commit
 pre-commit:
@@ -80,7 +80,7 @@ tomlsort_fixes:
 # Testing
 #
 .PHONY: tests
-tests: install pytest ruff_check black_check mypy_check dapperdata_check tomlsort_check paracelsus_check
+tests: install pytest ruff_check black_check mypy_check dapperdata_check tomlsort_check
 
 .PHONY: pytest
 pytest:

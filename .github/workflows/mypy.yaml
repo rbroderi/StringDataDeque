@@ -16,7 +16,6 @@ jobs:
 
       - name: Install Dependencies
         run: make install
-	run: pip install PyCryptodome
 
       - name: Test Typing
         run: make mypy_check

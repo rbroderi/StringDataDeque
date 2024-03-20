@@ -19,7 +19,6 @@ jobs:
 
       - name: Install Dependencies
         run: make install
-	run: pip install pycryptodome
 
       - name: Run Tests
         run: make pytest
