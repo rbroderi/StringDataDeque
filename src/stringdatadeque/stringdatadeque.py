@@ -147,27 +147,27 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         skip_conversion: bool = False,
     ) -> Self: ...
 
-    def insert(
+    # TODO remove type ignore: mypy fails to see this fulfilling overload #3
+    def insert(  # type:ignore[misc]
         self,
-        other: SequenceNonStr[T]
-        | T
-        | SequenceNonStr[ConvertibleToDataType]
-        | ConvertibleToDataType
-        | SequenceNonStr[DataType]
-        | DataType,
-        pre_process_func: Callable[[ConvertibleToDataType], ConvertibleToDataType]
-        | Callable[[DataType], ConvertibleToDataType]
-        | Callable[[T], ConvertibleToDataType]
+        other: (SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType)
+        | (SequenceNonStr[DataType] | DataType)
+        | (SequenceNonStr[T] | T),
+        /,
+        pre_process_func: (Callable[[T], ConvertibleToDataType] | None)
+        | (Callable[[ConvertibleToDataType], ConvertibleToDataType] | None)
+        | (Callable[[DataType], DataType] | None)
         | None = None,
         skip_conversion: bool = False,
     ) -> Self:
         if pre_process_func is None and skip_conversion:
-            is_bearable(other, SequenceNonStr[DataType] | DataType)
+            is_bearable(other, SequenceNonStr[DataType] | DataType)  # type:ignore[misc]
             other = cast(SequenceNonStr[DataType] | DataType, other)
             return self._insert_no_pre_or_conv(other)
         if pre_process_func is None:
             is_bearable(
-                other, SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType
+                other,
+                SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType,  # type:ignore[misc]
             )
             other = cast(
                 SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType, other
@@ -184,10 +184,10 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
     ) -> Self:
         data = other
         if not is_bearable(other, SequenceNonStr):
-            data = (other,)
+            data = (cast(T, other),)
         data = cast(SequenceNonStr[T], data)
-        data = tuple(map(pre_process_func, data))
-        self._insert_no_pre(data)
+        data_mapped = tuple(map(pre_process_func, data))
+        self._insert_no_pre(data_mapped)
         return self
 
     def _insert_no_pre(
@@ -195,10 +195,10 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
     ) -> Self:
         data = other
         if not is_bearable(other, SequenceNonStr):
-            data = (other,)
+            data = (cast(ConvertibleToDataType, other),)
         data = cast(SequenceNonStr[ConvertibleToDataType], data)
-        data = tuple(map(self.convert_func, data))
-        self._insert_no_pre_or_conv(data)
+        data_mapped = tuple(map(self.convert_func, data))
+        self._insert_no_pre_or_conv(data_mapped)
         return self
 
     def _insert_no_pre_or_conv(
@@ -206,7 +206,7 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
     ) -> Self:
         data = other
         if not is_bearable(other, SequenceNonStr):
-            data = (other,)
+            data = (cast(DataType, other),)
         data = cast(SequenceNonStr[DataType], data)
         self._data.extend(data)
         return self

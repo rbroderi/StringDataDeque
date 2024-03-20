@@ -80,7 +80,7 @@ tomlsort_fixes:
 # Testing
 #
 .PHONY: tests
-tests: install pytest ruff_check black_check mypy_check dapperdata_check tomlsort_check
+tests: install pytest ruff_check black_check mypy dapperdata_check tomlsort_check
 
 .PHONY: pytest
 pytest:
@@ -102,8 +102,8 @@ ruff_check:
 black_check:
 	$(PYTHON) -m ruff format . --check
 
-.PHONY: mypy_check
-mypy_check:
+.PHONY: mypy
+mypy:
 	$(PYTHON) -m mypy ${PACKAGE_SLUG}
 
 .PHONY: dapperdata_check
