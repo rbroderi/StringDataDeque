@@ -78,6 +78,11 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
             case _:
                 return str(self).__format__(format_spec)
 
+    def __contains__(self, key: DataType):
+        if key in self._data:
+            return True
+        return self.format_func(key) in str(self)
+
     def __add__(self, other: ConvertibleToDataType) -> Self:
         """Add obj to the StringDataDeque."""
         self.insert(other)

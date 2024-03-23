@@ -200,6 +200,14 @@ class Test_For_all:
             0""")
         assert f"{stringdeque:>24}" == "     1!2!3!4!5!6!7!8!9!0"
 
+    @staticmethod
+    def test_in(stringdeque_func):
+        stringdeque = stringdeque_func()
+        stringdeque.sep = ","
+        stringdeque |= [1, 2]
+        assert "1" in stringdeque
+        assert "1,2" in stringdeque
+
 
 # def test_or(stringdeque):
 #     stringdeque = stringdeque | ["Line1", "Line2"]
