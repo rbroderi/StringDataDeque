@@ -1,6 +1,7 @@
 # type: ignore
 import sys
 import timeit
+from collections import deque
 from functools import partial
 from pathlib import Path
 
@@ -36,6 +37,13 @@ def as_list(values):
     return ",".join(temp)
 
 
+def as_deque(values):
+    temp = deque()
+    for i in values:
+        temp.append(str(i))
+    return ",".join(temp)
+
+
 def as_stringdeque(values):
     temp = stringdatadeque.StringDeque(sep=",")
     for i in values:
@@ -50,7 +58,7 @@ if __name__ == "__main__":
     # assert a == b == c
     values = range(1000000)
     values_long = range(1000000)
-    funcs = (as_str, as_list, as_stringdeque)
+    funcs = (as_str, as_list, as_deque, as_stringdeque)
     for func in funcs:
         print(func.__name__)
         print(min(timeit.Timer(partial(func, values)).repeat(10, 1)))

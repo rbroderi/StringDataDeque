@@ -10,9 +10,10 @@ from typing import Sequence
 from typing import SupportsIndex
 from typing import TypeVar
 from typing import cast
-from typing import no_type_check
 from typing import overload
 
+from beartype import BeartypeConf  # pyright: ignore[reportUnknownVariableType]
+from beartype import BeartypeStrategy  # pyright: ignore[reportUnknownVariableType]
 from beartype import beartype  # pyright: ignore[reportUnknownVariableType]
 
 from .protocols import Builtin_or_DefinesDunderStr
@@ -25,6 +26,7 @@ ConvertibleToDataType = TypeVar("ConvertibleToDataType")
 # for name of caller of current func, specify 1.
 # for name of caller of caller of current func, specify 2. etc.
 currentFuncName = lambda n=0: sys._getframe(n + 1).f_code.co_name  # pyright: ignore[reportPrivateUsage]  # noqa: E731
+nobeartype: Any = beartype(conf=BeartypeConf(strategy=BeartypeStrategy.O0))  # pyright: ignore[reportUnknownVariableType]
 
 # import re
 
@@ -87,7 +89,7 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
                 self._data.extend(data_mapped)
         self.sep = sep
 
-    @no_type_check
+    @nobeartype
     def __str__(self) -> str:
         """Return string joined by sep."""
         return self.sep.join(map(self.format_func, self._data))
@@ -109,19 +111,19 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         """ "Return true if key is in the StringDataDeque or the string representation of it."""
         return True if (key in self._data) else (self.format_func(key) in str(self))
 
-    @no_type_check
+    @nobeartype
     def __add__(self, other: ConvertibleToDataType) -> Self:
         """Add obj to the StringDataDeque."""
         self._data.append(self.convert_func(other))
         return self
 
-    @no_type_check
+    @nobeartype
     def __radd__(self, other: ConvertibleToDataType) -> Self:
         """Right add."""
         self._data.append(self.convert_func(other))
         return self
 
-    @no_type_check
+    @nobeartype
     def __iadd__(self, other: ConvertibleToDataType) -> Self:
         """Define +=."""
         self._data.append(self.convert_func(other))
@@ -133,31 +135,31 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
     #     self._data.extend(map(self.convert_func, other))
     #     return self
 
-    @no_type_check
+    @nobeartype
     def __ror__(self, other: SequenceNonStr[ConvertibleToDataType]) -> Self:
         """Right or."""
         data_mapped = map(self.convert_func, other)
         self._data.extend(data_mapped)
         return self
 
-    @no_type_check
+    @nobeartype
     def __ior__(self, other: SequenceNonStr[ConvertibleToDataType]) -> Self:
         """Define |=."""
         data_mapped = map(self.convert_func, other)
         self._data.extend(data_mapped)
         return self
 
-    @no_type_check
+    @nobeartype
     def __len__(self) -> int:
         """Get length of the StringDataDeque."""
         return len(self._data)
 
-    @no_type_check
+    @nobeartype
     def __getitem__(self, key: SupportsIndex) -> DataType:
         """Get item by index."""
         return self._data[key]
 
-    @no_type_check
+    @nobeartype
     def __setitem__(self, key: SupportsIndex, value: ConvertibleToDataType) -> None:
         """Set item at index."""
         self._data[key] = self.convert_func(value)
