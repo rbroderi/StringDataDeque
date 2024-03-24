@@ -50,11 +50,16 @@ $(PACKAGE_CHECK): $(PYTHON_VENV)
 pre-commit:
 	pre-commit install
 
+.PHONY: setup_autodoc
+setup_autodoc:
+	sphinx-apidoc -f -o docs/source ${PACKAGE_SLUG}
+
+
 #
 # Formatting
 #
 .PHONY: chores
-chores: validate_pyproject ruff_fixes black_fixes dapperdata_fixes tomlsort_fixes
+chores: validate_pyproject ruff_fixes black_fixes dapperdata_fixes tomlsort_fixes docs
 
 .PHONY: validate pyproject
 validate_pyproject:
@@ -75,6 +80,10 @@ dapperdata_fixes:
 .PHONY: tomlsort_fixes
 tomlsort_fixes:
 	$(PYTHON_ENV) toml-sort $$(find . -not -path "./.venv/*" -name "*.toml") -i
+
+.PHONY: docs
+docs:
+	$(MAKE) -C ./docs clean html
 
 #
 # Testing

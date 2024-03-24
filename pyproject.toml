@@ -3,12 +3,12 @@ build-backend = "setuptools.build_meta"
 requires = ["setuptools>=67.0", "setuptools_scm[toml]>=7.1"]
 
 [project]
-authors = [{"name" = "R.Broderick"}]
+authors = [{ "name" = "R.Broderick" }]
 description = "Useful when building a string from data that can be converted into a string, in parts."
-version = "0.9.0"
-license = {"file" = "LICENSE"}
-name = "stringdatadeque"
-readme = {file = "README.md", content-type = "text/markdown"}
+version = "0.9.1"
+license = { "file" = "LICENSE" }
+name = "StringDataDeque"
+readme = { file = "README.md", content-type = "text/markdown" }
 dependencies = ["beartype"]
 
 [project.optional-dependencies]
@@ -25,7 +25,7 @@ dev = [
   "toml-sort",
   "uv",
   "validate-pyproject",
-  "packaging"
+  "packaging",
 ]
 optional = ["pycryptodome"]
 
@@ -43,10 +43,34 @@ line-length = 88
 force-single-line = true
 
 [tool.setuptools.dynamic]
-readme = {file = ["README.md"]}
+readme = { file = ["README.md"] }
 
 [tool.setuptools.package-data]
 library = ["py.typed"]
 
 [tool.setuptools.packages]
 find = {}
+
+[tool.sphinx-pyproject]
+# -- General configuration ---------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+extensions = [
+  "sphinx.ext.autodoc",
+  "sphinx_autodoc_typehints",
+  "sphinx.ext.viewcode",
+  "sphinx.ext.coverage",
+  "autodocsumm",
+  "sphinx_rtd_theme",
+  'sphinx_rtd_size',
+]
+
+sphinx_rtd_size_width = "90%"
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+auto_doc_default_options = { 'autosummary' = true }
+# -- Options for HTML output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+html_theme = "sphinx_rtd_theme"
+html_style = "../../../source/custom.css"
+html_static_path = ["_static"]
+html_theme_options = { 'display_version' = true, 'sticky_navigation' = true, 'includehidden' = true, 'titles_only' = false }
