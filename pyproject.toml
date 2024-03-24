@@ -29,6 +29,9 @@ dev = [
 ]
 optional = ["pycryptodome"]
 
+[tool.dapperdata]
+exclude_paths = [".venv", ".mypy_cache", ".git", ".vscode"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 

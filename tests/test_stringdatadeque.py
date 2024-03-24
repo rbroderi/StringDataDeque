@@ -3,25 +3,31 @@
 
 # print(sys.path)
 import textwrap
-from contextlib import nullcontext as does_not_raise
 
 import pytest
-from beartype.roar import BeartypeCallHintParamViolation
 from stringdatadeque import CircularStringDeque
+from stringdatadeque import StringDataDeque
 from stringdatadeque import StringDeque
 from stringdatadeque import WORMStringDeque
 
 
-def create_stringdeque():
-    return StringDeque(sep="\n")
+def create_stringdeque(value=None):
+    return StringDeque(sep="\n", data=value)
 
 
-def create_circularstringdeque():
-    return CircularStringDeque(size=10, sep="\n")
+def create_circularstringdeque(value=None):
+    return CircularStringDeque(size=10, sep="\n", data=value)
 
 
-def create_wormstringdeque():
-    return WORMStringDeque(sep="\n")
+def create_wormstringdeque(value=None):
+    return WORMStringDeque(sep="\n", data=value)
+
+
+def test_init():
+    a = StringDataDeque(data="test", convert_func=str, format_func=str)
+    b = StringDataDeque(data=["test"], convert_func=str, format_func=str)
+    assert a[0] == "test"
+    assert b[0] == "test"
 
 
 @pytest.mark.parametrize(
@@ -33,6 +39,15 @@ def create_wormstringdeque():
     ],
 )
 class Test_For_all:
+    @staticmethod
+    def test_init(stringdeque_func):
+        a = stringdeque_func("test")
+        b = stringdeque_func(1)
+        c = stringdeque_func(["test"])
+        assert a[0] == "test"
+        assert b[0] == "1"
+        assert c[0] == "test"
+
     @staticmethod
     def test_empty(stringdeque_func):
         stringdeque = stringdeque_func()
@@ -58,24 +73,6 @@ class Test_For_all:
         stringdeque += "Line 1"
         stringdeque += 2
         assert str(stringdeque) == "Line 1\n2"
-
-    @staticmethod
-    @pytest.mark.parametrize(
-        "input_iter,expectation",
-        [
-            ("test", pytest.raises(BeartypeCallHintParamViolation)),
-            (["test"], does_not_raise()),
-            (1, pytest.raises(BeartypeCallHintParamViolation)),
-            ([1], does_not_raise()),
-            ([1, 2], does_not_raise()),
-        ],
-    )
-    def test_ror_iterable(stringdeque_func, input_iter, expectation):
-        # verify that  Or'ing with str does not add each char since str is iterable
-        # thats probably not what anyone would want though
-        with expectation:
-            stringdeque = stringdeque_func()
-            stringdeque = input_iter | stringdeque
 
     @staticmethod
     def test_ror(stringdeque_func):
@@ -251,7 +248,7 @@ def testCircularStringDeque():
     test = CircularStringDeque(size=3, sep="\n")
     test += "1"
     test += "2"
-    test += [3, 4]
+    test |= [3, 4]
     assert len(test) == 3
     assert test[-1] == "4"
 

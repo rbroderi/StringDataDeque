@@ -3,12 +3,10 @@
 
 # print(sys.path)
 import base64
-from contextlib import nullcontext as does_not_raise
 from functools import partial
 from pathlib import Path
 
 import pytest
-from beartype.roar import BeartypeCallHintParamViolation
 from Crypto.PublicKey import RSA
 from stringdatadeque import EncryptedStringDeque
 from stringdatadeque import RSAMessage
@@ -58,29 +56,6 @@ def test_iadd(encryptedstringdeque):
     encryptedstringdeque += "Line 1"
     encryptedstringdeque += 2
     assert str(encryptedstringdeque) == "Line 1\n2"
-
-
-# def test_or(encryptedstringdeque):
-#     encryptedstringdeque = encryptedstringdeque | ["Line1", "Line2"]
-#     encryptedstringdeque = encryptedstringdeque | [3, 4]
-#     assert str(encryptedstringdeque) == "Line1\nLine2\n3\n4"
-
-
-@pytest.mark.parametrize(
-    "input_iter,expectation",
-    [
-        ("test", pytest.raises(BeartypeCallHintParamViolation)),
-        (["test"], does_not_raise()),
-        (1, pytest.raises(BeartypeCallHintParamViolation)),
-        ([1], does_not_raise()),
-        ([1, 2], does_not_raise()),
-    ],
-)
-def test_ror_iterable(encryptedstringdeque, input_iter, expectation):
-    # verify that  Or'ing with str does not add each char since str is iterable
-    # thats probably not what anyone would want though
-    with expectation:
-        encryptedstringdeque = input_iter | encryptedstringdeque
 
 
 def test_ror(encryptedstringdeque):
