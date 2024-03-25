@@ -37,8 +37,15 @@ nobeartype: Any = beartype(conf=BeartypeConf(strategy=BeartypeStrategy.O0))  # p
 
 
 class LikeMatch(str):
+    """Classed used to modify match case."""
+
     # override str.__eq__ to match if pattern in string
     def __eq__(self, pattern: object) -> bool:
+        """Override eq method to perform a 'like' match.
+
+        :param pattern: Pattern string to match against.
+        :return: True if pattern matches.
+        """
         pattern = cast(str, pattern)
         return pattern in self
 
@@ -144,7 +151,7 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
 
     @nobeartype
     def __ior__(self, other: SequenceNonStr[ConvertibleToDataType]) -> Self:
-        """Define |=."""
+        """Define ``|=`` ."""
         data_mapped = map(self.convert_func, other)
         self._data.extend(data_mapped)
         return self
