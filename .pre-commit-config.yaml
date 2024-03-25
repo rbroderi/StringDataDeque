@@ -1,28 +1,118 @@
+minimum_pre_commit_version: 1.21.0
 repos:
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
   - repo: local
     hooks:
-      - id: pytest
-        name: pytest
-        entry: make pytest_check
+      - id: chores
+        name: chores
+        entry: make chores
         language: system
         pass_filenames: false
-      - id: ruff
-        name: ruff
-        entry: make ruff_check
-        language: system
-        pass_filenames: false
-      - id: black
-        name: black
-        entry: make black_check
-        language: system
-        pass_filenames: false
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        types: [file, text]
+        exclude_types: [html, javascript]
+      - id: end-of-file-fixer
+        types: [file, text]
+        exclude_types: [html, javascript]
+      - id: check-case-conflict
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-merge-conflict
+        name: "Check for merge conflicts"
+      - id: check-yaml
+        name: "Yaml: Check files"
+        types: [file, yaml]
+      - id: check-toml
+        name: "TOML: check toml syntax"
+        types: [file, toml]
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.28.0
+    hooks:
+      - id: check-github-workflows
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.35.1  # or higher tag
+    hooks:
+      - id: yamllint
+        name: "Yaml: Linting files"
+        args: [--format, parsable, --strict]
+        types: [file, yaml]
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: remove-tabs
+        name: "Python: Convert Tabs to 4 spaces"
+        args: ['--whitespaces-count', '4']  # defaults to: 4
+        types: [file, python]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.2
+    hooks:
+      - id: pyupgrade
+        name: "Python: upgrade syntax"
+        args: [--py37-plus]
+  - repo: https://github.com/hadialqattan/pycln
+    rev: v2.4.0
+    hooks:
+      - id: pycln
+        name: "Python: remove unused imports."
+  - repo: local
+    hooks:
+      - id: python_file_name_check
+        name: "Python: File name check"
+        entry: "python ./check_names.py"
+        language: python
+        pass_filenames: true
+        types: [file, python]
+        verbose: false
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v3.1.0
+    hooks:
+      - id: add-trailing-comma
+        name: "Python: Add trailing comma"
+        args: [--py36-plus]
+        types: [file, python]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.9.0'
+    hooks:
       - id: mypy
-        name: mypy
-        entry: make mypy_check
+        name: "Python: Checking variable types"
+        args: [--ignore-missing-imports, --allow-redefinition]
+        exclude: "setup[.]py|conf[.]py"
+        additional_dependencies:
+          - pydantic
+          - types-all
+          - pandas-stubs
+        types: [file, python]
+  - repo: https://github.com/PyCQA/bandit
+    rev: '1.7.8'
+    hooks:
+      - id: bandit
+        name: "Python: Checking for potential security issues (bandit)"
+        args:
+          - "--skip=B404,B506,B607,B603,B701,B101,B602"
+  - repo: local
+    hooks:
+      - id: remove-en-dashes
+        name: Remove the EXTREMELY confusing unicode character U+2013
         language: system
-        pass_filenames: false
-      - id: tomlsort
-        name: tomlsort
-        entry: make tomlsort_check
-        language: system
-        pass_filenames: false
+        entry: perl -pi* -e 's/\xe2\x80\x93/-/g && ($t = 1) && print STDERR $_; END{{exit $t}}'
+        types: [file]
+        types_or: [python, powershell, lua, jinja]
+  - repo: https://github.com/sirosen/texthooks
+    rev: 0.6.4
+    hooks:
+      - id: fix-smartquotes
+        types: [file]
+        types_or: [python, powershell, lua, jinja]
+      - id: fix-ligatures
+        types: [file]
+        types_or: [python, powershell, lua, jinja]
+      - id: forbid-bidi-controls
+        types: [file]
+        types_or: [python, powershell, lua, jinja]
