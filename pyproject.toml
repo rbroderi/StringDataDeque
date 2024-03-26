@@ -9,6 +9,12 @@ version = "0.9.1"
 license = {"file" = "LICENSE"}
 name = "StringDataDeque"
 readme = {file = "README.md", content-type = "text/markdown"}
+# pep725
+# [external]
+# build-requires = [
+# "virtual:compiler/rust",
+# "virtual:compiler/cargo",
+# ]
 dependencies = ["beartype"]
 
 [project.optional-dependencies]
@@ -115,11 +121,10 @@ undoc-members = true
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py38, py39, py310, py311, py312
+envlist = py310, py311, py312
 
 [testenv]
-deps =
-    pytest
+deps =-rrequirements-dev.txt
 commands =
     pytest tests
 """
