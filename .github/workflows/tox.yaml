@@ -27,10 +27,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Dependencies
-        run: make install
-
       - name: Install tox and run tests
         run: |
-          pip install tox, typing-extensions, pycryptodome
+          make install
+          pip install tox
           tox --parallel
