@@ -125,7 +125,7 @@ dapperdata_check: ## run dapperdata check
 
 .PHONY: tomlsort_check
 tomlsort_check: ## run tomlsort_check
-	$(PYTHON_ENV) toml-sort $$(find . -not -path "./.venv/*" -not -path ""./.tox/*" -name "*.toml") --check
+	$(PYTHON_ENV) toml-sort $$(find . -not -path "./.venv/*" -not -path "./.tox/*" -name "*.toml") --check
 #
 # Dependencies
 #
