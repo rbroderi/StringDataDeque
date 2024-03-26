@@ -11,7 +11,7 @@ import pytest
 try:
     from Crypto.PublicKey import RSA  # nosec: B413
 except ModuleNotFoundError:
-    raise SystemExit(0)
+    exit()
 from stringdatadeque import EncryptedStringDeque
 from stringdatadeque import RSAMessage
 from stringdatadeque.encryptedstringdeque import Base64Encoded

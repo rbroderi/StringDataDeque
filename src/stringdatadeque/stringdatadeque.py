@@ -5,7 +5,11 @@ from collections import deque
 from collections.abc import Callable
 from typing import Any
 from typing import Generic
-from typing import Self
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 from typing import Sequence
 from typing import SupportsIndex
 from typing import TypeVar
@@ -91,7 +95,8 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
                 self._data.append(self.convert_func(cast(ConvertibleToDataType, data)))
             else:
                 data_mapped = map(
-                    self.convert_func, cast(Sequence[ConvertibleToDataType], data)
+                    self.convert_func,
+                    cast(Sequence[ConvertibleToDataType], data),
                 )
                 self._data.extend(data_mapped)
         self.sep = sep
@@ -206,7 +211,8 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
             else:
                 # if not preprocessing data must be of type convertabletodatatype
                 data_mapped: map[Any] = map(
-                    self.convert_func, cast(Sequence[ConvertibleToDataType], data)
+                    self.convert_func,
+                    cast(Sequence[ConvertibleToDataType], data),
                 )
                 self._data.extend(data_mapped)
         else:
