@@ -32,5 +32,5 @@ jobs:
 
       - name: Install tox and run tests
         run: |
-          pip install tox
+          pip install tox, typing-extensions, pycryptodome
           tox --parallel

@@ -34,7 +34,7 @@ dev = [
   "autodocsumm",
   "snakeviz",
   "pre-commit",
-  "pycryptodome",
+  # for python 3.10 and 3.11
   "typing-extensions"
 ]
 optional = ["pycryptodome"]
