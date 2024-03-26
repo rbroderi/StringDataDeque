@@ -29,5 +29,5 @@ jobs:
 
       - name: Install tox and run tests
         run: |
-          pip install tox tox-pyenv-redux
+          pip install tox
           tox --parallel
