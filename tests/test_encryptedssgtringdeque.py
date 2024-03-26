@@ -7,7 +7,11 @@ from functools import partial
 from pathlib import Path
 
 import pytest
-from Crypto.PublicKey import RSA
+
+try:
+    from Crypto.PublicKey import RSA  # nosec: B413
+except ModuleNotFoundError:
+    raise SystemExit(0)
 from stringdatadeque import EncryptedStringDeque
 from stringdatadeque import RSAMessage
 from stringdatadeque.encryptedstringdeque import Base64Encoded
@@ -77,13 +81,15 @@ def test_getitem(encryptedstringdeque, private_key):
     encryptedstringdeque += 1
     assert (
         encryptedstringdeque.decrypt(
-            msg=encryptedstringdeque[0], private_key=private_key
+            msg=encryptedstringdeque[0],
+            private_key=private_key,
         )
         == "test"
     )
     assert (
         encryptedstringdeque.decrypt(
-            msg=encryptedstringdeque[1], private_key=private_key
+            msg=encryptedstringdeque[1],
+            private_key=private_key,
         )
         == "1"
     )
@@ -97,14 +103,16 @@ def test_setitem(encryptedstringdeque, private_key):
     encryptedstringdeque += "old"
     assert (
         encryptedstringdeque.decrypt(
-            msg=encryptedstringdeque[0], private_key=private_key
+            msg=encryptedstringdeque[0],
+            private_key=private_key,
         )
         == "old"
     )
     encryptedstringdeque[0] = "new"
     assert (
         encryptedstringdeque.decrypt(
-            msg=encryptedstringdeque[0], private_key=private_key
+            msg=encryptedstringdeque[0],
+            private_key=private_key,
         )
         == "new"
     )
@@ -119,7 +127,10 @@ def test_format_funct(public_key):
     tag = encryptedstringdeque[0].tag
     ciphertext = encryptedstringdeque[0].ciphertext
     other = RSAMessage(
-        enc_session_key=enc_session_key, nonce=nonce, tag=tag, ciphertext=ciphertext
+        enc_session_key=enc_session_key,
+        nonce=nonce,
+        tag=tag,
+        ciphertext=ciphertext,
     )
     assert encryptedstringdeque[0] == other
 
@@ -184,22 +195,22 @@ def test_insert(encryptedstringdeque):
 def test_init_alt_paths(public_key, private_key):
     format_func = partial(EncryptedStringDeque.decrypt, private_key=private_key)
     test = EncryptedStringDeque(
-        data="string init test", public_key=public_key, format_func=format_func
+        data="string init test",
+        public_key=public_key,
+        format_func=format_func,
     )
     assert str(test) == "string init test"
 
 
 def test_Base64Encoded_error():
     assert Base64Encoded.is_base64("abcdefghia") is False
-    assert (
-        Base64Encoded.is_base64(base64.b64encode("abcdefghia".encode("utf-8"))) is True
-    )
+    assert Base64Encoded.is_base64(base64.b64encode(b"abcdefghia")) is True
 
 
 def test_Base64Encoded_set_bytes():
     test = RSAMessage(enc_session_key="", nonce="test", tag="", ciphertext="")
     test.ciphertext = "abcdefghia"
-    assert test.ciphertext == base64.b64encode("abcdefghia".encode("utf-8")).decode()
+    assert test.ciphertext == base64.b64encode(b"abcdefghia").decode()
 
 
 def test_RSAMessage_required():
