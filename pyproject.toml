@@ -128,7 +128,10 @@ isolated_build = True
 envlist = py310, py311, py312
 
 [testenv]
-deps =-rrequirements-dev.txt
+deps =
+    -rrequirements-dev.txt
+    -rrequirements-optional.txt
+
 commands =
     pytest tests
 """

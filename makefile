@@ -83,7 +83,7 @@ dapperdata_fixes: ## run dapperdata fixes
 
 .PHONY: tomlsort_fixes
 tomlsort_fixes: ## run tomlsort fixes
-	$(PYTHON_ENV) toml-sort $$(find . -not -path "./.venv/*" -name "*.toml") -i
+	$(PYTHON_ENV) toml-sort $$(find . -not -path "./.venv/*" -not -path "./.tox/*" -name "*.toml") -i
 
 .PHONY: docs
 docs: ## generate docs
@@ -125,7 +125,7 @@ dapperdata_check: ## run dapperdata check
 
 .PHONY: tomlsort_check
 tomlsort_check: ## run tomlsort_check
-	$(PYTHON_ENV) toml-sort $$(find . -not -path "./.venv/*" -name "*.toml") --check
+	$(PYTHON_ENV) toml-sort $$(find . -not -path "./.venv/*" -not -path ""./.tox/*" -name "*.toml") --check
 #
 # Dependencies
 #

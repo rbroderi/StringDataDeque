@@ -9,7 +9,9 @@ from pathlib import Path
 import pytest
 
 try:
-    from Crypto.PublicKey import RSA  # nosec: B413
+    from Crypto.PublicKey import (  # nosec: B413 #false positive as we are using pycryptome
+        RSA,
+    )
 except ModuleNotFoundError:
     pytest.skip(allow_module_level=True)
 from stringdatadeque import EncryptedStringDeque

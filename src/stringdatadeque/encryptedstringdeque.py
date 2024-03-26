@@ -6,14 +6,20 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from dataclasses import field
 from functools import partial
-from typing import Self
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 from typing import cast
 
 from beartype import beartype  # pyright: ignore[reportUnknownVariableType]
-from Crypto.Cipher import AES
-from Crypto.Cipher import PKCS1_OAEP
-from Crypto.PublicKey import RSA
-from Crypto.Random import get_random_bytes
+from Crypto.Cipher import AES  # nosec: B413
+from Crypto.Cipher import PKCS1_OAEP  # nosec: B413
+from Crypto.PublicKey import (  # nosec: B413 #false positive as we are using pycryptome
+    RSA,
+)
+from Crypto.Random import get_random_bytes  # nosec: B413
 
 from .protocols import Builtin_or_DefinesDunderStr
 from .protocols import SequenceNonstrOfStr
@@ -54,7 +60,7 @@ class Base64Encoded(str):
                 instance.__dict__[self.__name] = value
             else:
                 instance.__dict__[self.__name] = base64.b64encode(
-                    value.encode("utf-8")
+                    value.encode("utf-8"),
                 ).decode("utf-8")
         else:
             instance.__dict__[self.__name] = base64.b64encode(value).decode("utf-8")
@@ -86,7 +92,7 @@ class RSAMessage:
 
     def attribute_as_bytes(self, attribute_name: str) -> bytes:
         return cast(Base64Encoded, getattr(RSAMessage, attribute_name)).get_decoded(
-            instance=self
+            instance=self,
         )
 
 
