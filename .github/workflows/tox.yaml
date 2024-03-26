@@ -1,4 +1,4 @@
-name: test on differnt versions of python
+name: TOX testing
 
 "on":
   push:
@@ -26,6 +26,12 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: '3.12'
+
+      - name: Install Dependencies
+        run: make install
+        with:
+          pip_extras: "dev"
+
 
       - name: Install tox and run tests
         run: |
