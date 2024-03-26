@@ -29,9 +29,6 @@ jobs:
 
       - name: Install Dependencies
         run: make install
-        with:
-          pip_extras: "dev"
-
 
       - name: Install tox and run tests
         run: |
