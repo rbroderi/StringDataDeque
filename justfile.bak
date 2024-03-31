@@ -27,7 +27,7 @@ setup_autodoc:
 # Formatting
 #
 # Run all linting and fixes
-fixes: validate_pyproject ruff_fixes ruff_format_fixes dapperdata_fixes tomlsort_fixes docs
+fixes: validate_pyproject ruff_fixes ruff_format_fixes dapperdata_fixes tomlsort_fixes docs pytest
 
 # Validate pyproject.toml format
 validate_pyproject:
@@ -37,6 +37,7 @@ validate_pyproject:
 ruff_fixes:
     {{PYTHON}} -m ruff check . --fix
 
+black_check := ruff_format_fixes
 #Run Ruff format fixes
 ruff_format_fixes:
     {{PYTHON}} -m ruff format .

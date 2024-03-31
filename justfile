@@ -37,6 +37,7 @@ validate_pyproject:
 ruff_fixes:
     {{PYTHON}} -m ruff check . --fix
 
+alias black_check := ruff_format_fixes
 #Run Ruff format fixes
 ruff_format_fixes:
     {{PYTHON}} -m ruff format .
