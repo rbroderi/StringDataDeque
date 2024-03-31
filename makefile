@@ -50,8 +50,8 @@ pip: $(PYTHON_VENV)
 $(PACKAGE_CHECK): $(PYTHON_VENV)
 	$(PYTHON) -m pip install -e .[dev,optional]
 
-.PHONY: pre-commit
-pre-commit:
+.PHONY: pre-commit_install
+pre-commit_install:
 	pre-commit install
 
 .PHONY: setup_autodoc

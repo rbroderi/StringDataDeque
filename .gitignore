@@ -24,8 +24,10 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-pyproject.toml.bak
 MANIFEST
+pyproject.toml.bak
+makefile.bak
+.python_version
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -158,3 +160,7 @@ stringdatadeque/_version.py
 
 #cprofiler
 *.prof
+
+#taskfile
+task
+taskfile.yaml.bak
