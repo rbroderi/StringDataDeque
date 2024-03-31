@@ -6,9 +6,9 @@ repos:
       - id: check-useless-excludes
   - repo: local
     hooks:
-      - id: chores
-        name: chores
-        entry: make chores
+      - id: fixes
+        name: fixes
+        entry: just fixes
         language: system
         pass_filenames: false
   - repo: https://github.com/pre-commit/pre-commit-hooks
