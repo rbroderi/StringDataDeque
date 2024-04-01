@@ -1,6 +1,6 @@
 name: PyPI
 
-on:
+"on":
   push:
     branches:
       - "**"
@@ -26,11 +26,13 @@ jobs:
         with:
           python-version-file: .python-version
 
+      - uses: taiki-e/install-action@just
+
       - name: Install Dependencies
-        run: make install
+        run: just install
 
       - name: Build Wheel
-        run: make build
+        run: just build
 
       # This will only run on Tags
       - name: Publish package

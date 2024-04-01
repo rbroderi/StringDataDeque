@@ -1,6 +1,6 @@
 name: PyTest
 
-on:
+"on":
   push:
   pull_request:
 
@@ -17,8 +17,10 @@ jobs:
         with:
           python-version-file: .python-version
 
+      - uses: taiki-e/install-action@just
+
       - name: Install Dependencies
-        run: make install
+        run: just install
 
       - name: Run Tests
-        run: make pytest
+        run: just pytest

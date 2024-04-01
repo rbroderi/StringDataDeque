@@ -1,6 +1,6 @@
 name: Configuration File Formatting
 
-on:
+"on":
   push:
   pull_request:
 
@@ -14,8 +14,10 @@ jobs:
         with:
           python-version-file: .python-version
 
+      - uses: taiki-e/install-action@just
+
       - name: Install Dependencies
-        run: make install
+        run: just install
 
       - name: Test Formatting
-        run: make dapperdata_check
+        run: just dapperdata_check
