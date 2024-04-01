@@ -8,8 +8,8 @@ from typing import Generic
 
 try:
     from typing import Self
-except ImportError:
-    from typing_extensions import Self
+except ImportError:  # pragma: no cover
+    from typing_extensions import Self  # pragma: no cover
 from typing import Sequence
 from typing import SupportsIndex
 from typing import TypeVar

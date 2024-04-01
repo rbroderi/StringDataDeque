@@ -9,8 +9,8 @@ from functools import partial
 
 try:
     from typing import Self
-except ImportError:
-    from typing_extensions import Self
+except ImportError:  # pragma: no cover
+    from typing_extensions import Self  # pragma: no cover
 from typing import cast
 
 from beartype import beartype  # pyright: ignore[reportUnknownVariableType]
