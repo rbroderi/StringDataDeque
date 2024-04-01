@@ -19,5 +19,8 @@ jobs:
       - name: Install Dependencies
         run: just install
 
+      - name: Install toml-sort
+        run: pip install toml-sort
+
       - name: Test Typing
         run: just tomlsort_check
