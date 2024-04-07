@@ -6,3 +6,4 @@ rules:
   line-length: disable
   truthy:
     level: warning
+  indentation: disable
