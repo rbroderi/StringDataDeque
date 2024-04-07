@@ -29,7 +29,7 @@ setup_autodoc:
 # Run all linting and fixes
 fixes: validate_pyproject ruff_fixes ruff_format_fixes dapperdata_fixes tomlsort_fixes docs pytest
 
-_fixes_no_ruff: validate_pyproject dapperdata_fixes tomlsort_fixes docs pytest
+_fixes_no_ruff: validate_pyproject dapperdata_fixes tomlsort_fixes docs pytest update_dependencies
 
 # Validate pyproject.toml format
 validate_pyproject:
