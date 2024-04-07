@@ -4,15 +4,6 @@ repos:
     hooks:
 #      - id: check-hooks-apply
       - id: check-useless-excludes
-  - repo: local
-    hooks:
-      - id: python_file_name_check
-        name: "Python: File name check"
-        entry: "bash -c 'pre-commit run check-hooks-apply || true'"
-        language: system
-        always_run: true
-        fail_fast: true
-        verbose: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
