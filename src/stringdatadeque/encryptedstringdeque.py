@@ -1,3 +1,5 @@
+"""An example subclass of string deque."""
+
 import base64
 import binascii
 import dataclasses
@@ -30,13 +32,15 @@ from .stringdatadeque import StringDataDeque
 class Base64Encoded(str):
     """Stores string as base64 encoded."""
 
-    __slots__ = "__name"
+    __slots__ = ("__name",)
 
     @staticmethod
-    def is_base64(sb: str | bytes):
+    def is_base64(sb: str | bytes) -> bool:
+        """Return true if it is a base64 encoded."""
         try:
             if isinstance(sb, str):
-                # If there's any unicode here, an exception will be thrown and the function will return false
+                # If there's any unicode here, an exception will be thrown and the
+                # function will return false
                 sb = bytes(sb, "ascii")
             return base64.b64encode(base64.b64decode(sb)) == sb
         except (UnicodeEncodeError, binascii.Error):
@@ -49,6 +53,7 @@ class Base64Encoded(str):
         return instance.__dict__[self.__name]
 
     def get_decoded(self, instance: "RSAMessage") -> bytes:
+        """Return value base64 decoded."""
         return base64.b64decode(instance.__dict__[self.__name])
 
     def __set__(self, instance: "RSAMessage", value: str | bytes) -> None:
@@ -80,17 +85,22 @@ class RSAMessage:
     tag: str | bytes = field(default=Base64Encoded())
     ciphertext: str | bytes = field(default=Base64Encoded())
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
+        """Make sure that all fields are passed."""
         fields = dataclasses.fields(self)
         count = 0
         for the_field in fields:
             if the_field.name not in self.__dict__:
                 count += 1
         if count > 0:
-            msg = f"{self.__class__.__qualname__}.__init__() missing {count} required arguments"
+            msg = (
+                f"{self.__class__.__qualname__}.__init__() missing {count}"
+                " required arguments"
+            )
             raise TypeError(msg)
 
     def attribute_as_bytes(self, attribute_name: str) -> bytes:
+        """Return the attribute as bytes instead of base64."""
         return cast(Base64Encoded, getattr(RSAMessage, attribute_name)).get_decoded(
             instance=self,
         )
