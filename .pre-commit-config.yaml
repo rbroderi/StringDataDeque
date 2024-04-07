@@ -12,6 +12,7 @@ repos:
         language: system
         always_run: true
         fail_fast: true
+        verbose: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
