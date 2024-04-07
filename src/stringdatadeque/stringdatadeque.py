@@ -10,7 +10,7 @@ try:
     from typing import Self
 except ImportError:  # pragma: no cover
     from typing_extensions import Self  # pragma: no cover
-from typing import Sequence
+from collections.abc import Sequence
 from typing import SupportsIndex
 from typing import TypeVar
 from typing import cast
@@ -29,7 +29,7 @@ ConvertibleToDataType = TypeVar("ConvertibleToDataType")
 # for current func name, specify 0 or no argument.
 # for name of caller of current func, specify 1.
 # for name of caller of caller of current func, specify 2. etc.
-currentFuncName = lambda n=0: sys._getframe(n + 1).f_code.co_name  # pyright: ignore[reportPrivateUsage]  # noqa: E731
+current_func_name = lambda n=0: sys._getframe(n + 1).f_code.co_name  # pyright: ignore[reportPrivateUsage]  # noqa: E731, SLF001
 nobeartype: Any = beartype(conf=BeartypeConf(strategy=BeartypeStrategy.O0))  # pyright: ignore[reportUnknownVariableType]
 
 # import re
@@ -42,6 +42,8 @@ nobeartype: Any = beartype(conf=BeartypeConf(strategy=BeartypeStrategy.O0))  # p
 
 class LikeMatch(str):
     """Classed used to modify match case."""
+
+    __slots__ = ()
 
     # override str.__eq__ to match if pattern in string
     def __eq__(self, pattern: object) -> bool:
@@ -107,6 +109,7 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         return self.sep.join(map(self.format_func, self._data))
 
     def __format__(self, format_spec: str) -> str:
+        """Format string with sep override."""
         match LikeMatch(format_spec):
             case "sep=":
                 old_sep, self.sep = (
@@ -119,8 +122,8 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
             case _:
                 return str(self).__format__(format_spec)
 
-    def __contains__(self, key: DataType):
-        """ "Return true if key is in the StringDataDeque or the string representation of it."""
+    def __contains__(self, key: DataType) -> bool:
+        """Return true if key is in the StringDataDeque or the string representation."""
         return True if (key in self._data) else (self.format_func(key) in str(self))
 
     @nobeartype
@@ -201,6 +204,14 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         pre_process_func: Callable[[T], ConvertibleToDataType] | None = None,
         skip_conversion: bool = False,
     ) -> Self:
+        """Insert item(s) into the stringDequeue.
+
+        :param other: Item(s) to insert.
+        :param pre_process_func: Function that will preprocess the data,
+            defaults to None
+        :param skip_conversion: Flag to skip conversion of items., defaults to False
+        :return: The StringDeque.
+        """
         data: Sequence[object] | object = other
         if isinstance(data, str) or not isinstance(data, Sequence):
             data = (other,)
@@ -320,7 +331,7 @@ class WORMStringDeque(StringDeque):
         | None = None,
         sep: str = "",
     ) -> None:
-        """Initialize the WORMStringDeque"""
+        """Initialize the WORMStringDeque."""
         super().__init__(data=data, sep=sep)
 
     def __setitem__(
@@ -329,20 +340,25 @@ class WORMStringDeque(StringDeque):
         value: Builtin_or_DefinesDunderStr,
     ) -> None:
         """Set item at index."""
-        msg = f"{self.__class__.__qualname__} does not implement {currentFuncName()}"
+        msg = f"{self.__class__.__qualname__} does not implement {current_func_name()}"
         raise NotImplementedError(
             msg,
         )
 
     def clear(self) -> None:
         """Clear not implemented."""
-        msg = f"{self.__class__.__qualname__} does not implement {currentFuncName()}"
+        msg = f"{self.__class__.__qualname__} does not implement {current_func_name()}"
         raise NotImplementedError(
             msg,
         )
 
     def __delitem__(self, key: SupportsIndex) -> None:
-        msg = f"{self.__class__.__qualname__} does not implement {currentFuncName()}"
+        """Delete item from StringDeque.
+
+        :param key: Item to remove
+        :raises NotImplementedError: Not Enabled on WORMStringDeque.
+        """
+        msg = f"{self.__class__.__qualname__} does not implement {current_func_name()}"
         raise NotImplementedError(
             msg,
         )

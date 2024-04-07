@@ -6,10 +6,10 @@ from enum import IntEnum
 from pathlib import Path
 
 try:
-    from exit_codes.exit_codes import ExitCode
+    from exit_codes.exit_codes import ExitCode  # pyright: ignore[reportAssignmentType]
 except ImportError:
 
-    class ExitCode(IntEnum):  # type: ignore
+    class ExitCode(IntEnum):  # type: ignore[no-redef]
         """Redefine in case ExitCode is not installed."""
 
         OS_FILE = 1

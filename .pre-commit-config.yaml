@@ -71,10 +71,12 @@ repos:
         name: "Python: Ruff"
         types: [file, python]
         args: [--fix]
+        fail_fast: true
       # Run the formatter.
       - id: ruff-format
         name: "Python: Ruff format"
         types: [file, python]
+        fail_fast: true
   - repo: local
     hooks:
       - id: python_file_name_check

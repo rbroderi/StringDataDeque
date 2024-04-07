@@ -1,3 +1,4 @@
+# ruff: noqa
 # type:ignore
 # import sys
 
@@ -213,7 +214,8 @@ class Test_For_all:
 
 
 @pytest.mark.parametrize(
-    "stringdeque", [create_stringdeque(), create_circularstringdeque()]
+    "stringdeque",
+    [create_stringdeque(), create_circularstringdeque()],
 )
 def test_setitem(stringdeque):
     with pytest.raises(IndexError):
@@ -232,7 +234,8 @@ def test_StringDeque():
 
 
 @pytest.mark.parametrize(
-    "stringdeque", [create_stringdeque(), create_circularstringdeque()]
+    "stringdeque",
+    [create_stringdeque(), create_circularstringdeque()],
 )
 def test_clear(stringdeque):
     stringdeque += "line 1"

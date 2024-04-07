@@ -9,7 +9,7 @@ Welcome to StringDataDeque's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   
+
    getting-started
    source/modules
 
