@@ -4,14 +4,6 @@ repos:
     hooks:
       - id: check-hooks-apply
       - id: check-useless-excludes
-  - repo: local
-    hooks:
-      - id: fixes
-        name: fixes
-        entry: just _fixes_no_ruff
-        language: system
-        pass_filenames: false
-        verbose: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -68,10 +60,12 @@ repos:
     hooks:
       # Run the linter.
       - id: ruff
+        name: "Python: Ruff"
         types: [file, python]
         args: [--fix]
       # Run the formatter.
       - id: ruff-format
+        name: "Python: Ruff format"
         types: [file, python]
   - repo: local
     hooks:
@@ -128,3 +122,12 @@ repos:
       - id: forbid-bidi-controls
         types: [file]
         types_or: [python, powershell, lua, jinja]
+        fail_fast: true
+  - repo: local
+    hooks:
+      - id: fixes
+        name: fixes
+        entry: just _fixes_no_ruff
+        language: system
+        pass_filenames: false
+        verbose: true
