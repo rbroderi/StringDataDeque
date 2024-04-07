@@ -8,7 +8,7 @@ repos:
     hooks:
       - id: fixes
         name: fixes
-        entry: just fixes
+        entry: just _fixes_no_ruff
         language: system
         pass_filenames: false
         verbose: true
@@ -62,6 +62,17 @@ repos:
     hooks:
       - id: pycln
         name: "Python: remove unused imports."
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.3.5
+    hooks:
+      # Run the linter.
+      - id: ruff
+        types: [file, python]
+        args: [--fix]
+      # Run the formatter.
+      - id: ruff-format
+        types: [file, python]
   - repo: local
     hooks:
       - id: python_file_name_check
