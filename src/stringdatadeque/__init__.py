@@ -1,3 +1,5 @@
+"""Main package for stringdatadeque."""
+
 from .stringdatadeque import CircularStringDeque as CircularStringDeque
 from .stringdatadeque import StringDataDeque as StringDataDeque
 from .stringdatadeque import StringDeque as StringDeque
@@ -15,5 +17,6 @@ except ModuleNotFoundError:
     __warnings.warn(
         "PyCryptodome required for EncryptedStringDeque",
         ImportWarning,
+        stacklevel=0,
     )
     del __warnings

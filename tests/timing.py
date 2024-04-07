@@ -1,4 +1,5 @@
-# type: ignore
+# ruff: noqa
+# type:ignore
 import sys
 import timeit
 from collections import deque

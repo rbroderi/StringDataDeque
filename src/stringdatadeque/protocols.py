@@ -1,3 +1,5 @@
+"""Holds Protocols and types."""
+
 import builtins
 from collections.abc import Sequence
 from typing import Annotated
@@ -23,10 +25,6 @@ def _defines_str(obj: object) -> bool:
 
 
 Builtin_or_DefinesDunderStr = Annotated[Printable, Is[_defines_str]]
-
-
-# def _x_is_sequence_of_x(val: object) -> bool:
-#     return isinstance(val, Sequence) and isinstance(val[0], type(val))  # pyright: ignore[reportUnknownArgumentType]
 
 
 T = TypeVar("T")
