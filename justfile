@@ -29,7 +29,7 @@ setup_autodoc:
 # Run all linting and fixes
 fixes: validate_pyproject ruff_fixes ruff_format_fixes dapperdata_fixes tomlsort_fixes docs pytest
 
-_fixes_no_ruff: validate_pyproject dapperdata_fixes tomlsort_fixes docs pytest update_dependencies
+_fixes_no_ruff: validate_pyproject dapperdata_fixes tomlsort_fixes docs pytest update_dependencies_quiet
 
 # Validate pyproject.toml format
 validate_pyproject:
@@ -109,6 +109,11 @@ update_dependencies:
     {{PYTHON}} -m uv pip compile --upgrade --output-file=requirements.txt pyproject.toml
     {{PYTHON}} -m uv pip compile --upgrade --output-file=requirements-dev.txt --extra=dev pyproject.toml
     {{PYTHON}} -m uv pip compile --upgrade --output-file=requirements-optional.txt --extra=optional pyproject.toml
+
+update_dependencies_quiet:
+    {{PYTHON}} -m uv pip compile --upgrade --output-file=requirements.txt pyproject.toml > /dev/null
+    {{PYTHON}} -m uv pip compile --upgrade --output-file=requirements-dev.txt --extra=dev pyproject.toml > /dev/null
+    {{PYTHON}} -m uv pip compile --upgrade --output-file=requirements-optional.txt --extra=optional pyproject.toml > /dev/null
 
 #
 # Packaging
