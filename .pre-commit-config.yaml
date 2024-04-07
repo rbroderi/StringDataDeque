@@ -2,10 +2,25 @@ minimum_pre_commit_version: 1.21.0
 repos:
   - repo: meta
     hooks:
-      - id: check-hooks-apply
+#      - id: check-hooks-apply
       - id: check-useless-excludes
+  - repo: local
+    hooks:
+      - id: python_file_name_check
+        name: "Python: File name check"
+        entry: "bash -c 'check-hooks-apply || true'"
+        language: system
+        always_run: true
+        fail_fast: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
+    hooks:
+      - id: check-ast
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
     hooks:
       - id: trailing-whitespace
         types: [file, text]
@@ -14,8 +29,9 @@ repos:
         types: [file, text]
         exclude_types: [html, javascript]
       - id: check-case-conflict
+      - id: mixed-line-ending
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: check-merge-conflict
         name: "Check for merge conflicts"
@@ -26,7 +42,7 @@ repos:
         name: "TOML: check toml syntax"
         types: [file, toml]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.28.0
+    rev: 0.28.1
     hooks:
       - id: check-github-workflows
   - repo: https://github.com/adrienverge/yamllint.git
@@ -48,7 +64,7 @@ repos:
     hooks:
       - id: pyupgrade
         name: "Python: upgrade syntax"
-        args: [--py37-plus]
+        args: [--py310-plus]
   - repo: https://github.com/hadialqattan/pycln
     rev: v2.4.0
     hooks:
@@ -111,7 +127,7 @@ repos:
         types: [file]
         types_or: [python, powershell, lua, jinja]
   - repo: https://github.com/sirosen/texthooks
-    rev: 0.6.4
+    rev: 0.6.6
     hooks:
       - id: fix-smartquotes
         types: [file]
@@ -123,6 +139,17 @@ repos:
         types: [file]
         types_or: [python, powershell, lua, jinja]
         fail_fast: true
+  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v2.13.0
+    hooks:
+      - id: pretty-format-java
+        args: [--autofix]
+      - id: pretty-format-golang
+        args: [--autofix]
+      - id: pretty-format-ini
+        args: [--autofix]
+      - id: pretty-format-rust
+        args: [--autofix]
   - repo: local
     hooks:
       - id: fixes
