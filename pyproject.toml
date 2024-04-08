@@ -81,6 +81,7 @@ docstring-code-format = true
 docstring-code-line-length = "dynamic"
 
 [tool.ruff.lint]
+typing-modules = ["beartype.typing"]
 select = ["ALL"]
 ignore = [
   "B024",

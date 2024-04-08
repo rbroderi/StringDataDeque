@@ -21,6 +21,14 @@ class Printable(Protocol):  # pragma: no cover
 
 
 def _defines_str(obj: object) -> bool:
+    """Check if an object defines a custom `__str__` method.
+
+    :param obj: An object to check.
+    :type obj: object
+
+    :return: True if the object defines a custom `__str__` method, False otherwise.
+    :rtype: bool
+    """
     return type(obj).__name__ in dir(builtins) or type(obj).__str__ != object.__str__
 
 
