@@ -41,11 +41,15 @@ nobeartype: Any = beartype(conf=BeartypeConf(strategy=BeartypeStrategy.O0))  # p
 
 
 class LikeMatch(str):
-    """Classed used to modify match case."""
+    """A class representing a custom string type used for 'like' matching.
+
+    :param pattern: Pattern string to match against.
+    :type pattern: str
+    :return: True if pattern matches.
+    """
 
     __slots__ = ()
 
-    # override str.__eq__ to match if pattern in string
     def __eq__(self, pattern: object) -> bool:
         """Override eq method to perform a 'like' match.
 
@@ -59,7 +63,18 @@ class LikeMatch(str):
 # NOTE skip type checking on _add and _or for speed
 @beartype
 class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
-    """A deque made to hold data that can be formatted as a string."""
+    """A generic class representing a deque of data that can be formatted as a string.
+
+    :param convert_func: A function to convert data to a specific data type.
+    :type convert_func: Callable[[ConvertibleToDataType], DataType]
+    :param format_func: A function to format data as a string.
+    :type format_func: Callable[[DataType], str]
+    :param data: The data to be stored in the deque.
+    :type data: SequenceNonStr[ConvertibleToDataType] | ConvertibleToDataType | None
+    :param sep: The separator to join elements when converting to a string.
+        defaults to ''
+    :type sep: str
+    """
 
     @overload
     def __init__(
@@ -88,7 +103,26 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         | None = None,
         sep: str = "",
     ) -> None:
-        """Initialize the StringDataDeque."""
+        """Initialize the StringDataDeque.
+
+        :param convert_func: A callable function that converts input data to a specific
+            data type.
+        :type convert_func: Callable[[ConvertibleToDataType], DataType]
+
+        :param format_func: A callable function that formats the data for display.
+        :type format_func: Callable[[DataType], str]
+
+        :param data: Initial data to be processed. It can be a single element, a
+            sequence of elements, or None.
+        :type data: Union[ConvertibleToDataType,
+            SequenceNonStr[ConvertibleToDataType], None]
+
+        :param sep: A separator to be used when displaying the data.
+        :type sep: str
+
+        :return: None
+        :rtype: None
+        """
         self._data: deque[DataType] = deque()
         self.convert_func = convert_func
         self.format_func = format_func
@@ -105,11 +139,22 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
 
     @nobeartype
     def __str__(self) -> str:
-        """Return string joined by sep."""
+        """Return string joined by sep.
+
+        :return: A string representation of the object.
+        :rtype: str
+        """
         return self.sep.join(map(self.format_func, self._data))
 
     def __format__(self, format_spec: str) -> str:
-        """Format string with sep override."""
+        """Format string with sep override.
+
+        :param format_spec: A string specifying the format.
+        :type format_spec: str
+
+        :return: The formatted string.
+        :rtype: str
+        """
         match LikeMatch(format_spec):
             case "sep=":
                 old_sep, self.sep = (
@@ -123,60 +168,129 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
                 return str(self).__format__(format_spec)
 
     def __contains__(self, key: DataType) -> bool:
-        """Return true if key is in the StringDataDeque or the string representation."""
+        """Return true if key is in the StringDataDeque or the string representation.
+
+        :param key: The key to check for in the data structure.
+        :type key: DataType
+
+        :return: True if the key is found in the data structure, False otherwise.
+        :rtype: bool
+        """
         return True if (key in self._data) else (self.format_func(key) in str(self))
 
     @nobeartype
     def __add__(self, other: ConvertibleToDataType) -> Self:
-        """Add obj to the StringDataDeque."""
+        """Add the input data to the StringDataDeque.
+
+        :param other: Data to be added to the current object.
+        :type other: ConvertibleToDataType
+
+        :return: Current object after adding the input data.
+        :rtype: Self
+        """
         self._data.append(self.convert_func(other))
         return self
 
     @nobeartype
     def __radd__(self, other: ConvertibleToDataType) -> Self:
-        """Right add."""
+        """Right add another value to the data container.
+
+        :param other: A value that can be converted to the underlying data
+            type of the container.
+        :type other: ConvertibleToDataType
+
+        :return: The modified container with the additional value added.
+        :rtype: Self
+        """
         self._data.append(self.convert_func(other))
         return self
 
     @nobeartype
     def __iadd__(self, other: ConvertibleToDataType) -> Self:
-        """Define +=."""
+        # """Define +=."""
+        """Add another element to the data container in place.
+
+        :param other: Another element to add to the data container.
+        :type other: ConvertibleToDataType
+
+        :return: The updated data container with the new element added.
+        :rtype: Self
+        """
         self._data.append(self.convert_func(other))
         return self
 
     # do we want ror?
     # def __or__(self, other: NonRecursiveIterable[ConvertibleToDataType]) -> Self:
-    #     """Extend StringDataDeque by iterable."""
+    #     #"""Extend StringDataDeque by iterable."""
     #     self._data.extend(map(self.convert_func, other))
     #     return self
 
     @nobeartype
     def __ror__(self, other: SequenceNonStr[ConvertibleToDataType]) -> Self:
-        """Right or."""
+        """Right or.
+
+        Perform element-wise mapping of the input sequence using a conversion function
+            and extend the internal data with the mapped values.
+
+        :param other: A sequence of elements to apply the conversion function to.
+        :type other: Sequence
+
+        :return: Updated instance with the mapped values added to the internal data.
+        :rtype: Self
+        """
         data_mapped = map(self.convert_func, other)
         self._data.extend(data_mapped)
         return self
 
     @nobeartype
     def __ior__(self, other: SequenceNonStr[ConvertibleToDataType]) -> Self:
-        """Define ``|=`` ."""
+        """Update the object with the union of itself and another sequence.
+
+        :param other: A sequence of items that can be converted to the same data type
+            as the object.
+        :type other: SequenceNonStr[ConvertibleToDataType]
+
+        :return: The updated object after the union operation.
+        :rtype: Self
+        """
         data_mapped = map(self.convert_func, other)
         self._data.extend(data_mapped)
         return self
 
     @nobeartype
     def __len__(self) -> int:
-        """Get length of the StringDataDeque."""
+        """Return the length of the data stored in the StringDataDeque.
+
+        :return: The length of the data.
+        :rtype: int
+        """
         return len(self._data)
 
     @nobeartype
     def __getitem__(self, key: SupportsIndex) -> DataType:
-        """Get item by index."""
+        """Get an item from the data using the specified key.
+
+        :param key: The key for retrieving the item from the data.
+        :type key: SupportsIndex
+
+        :return: The item corresponding to the key in the data.
+        :rtype: DataType
+        """
         return self._data[key]
 
     @nobeartype
     def __setitem__(self, key: SupportsIndex, value: ConvertibleToDataType) -> None:
-        """Set item at index."""
+        """Set the value of a key in the data dictionary.
+
+        :param key: The key to set in the dictionary.
+        :type key: SupportsIndex
+
+        :param value: The value to set for the given key.
+        :type value: ConvertibleToDataType
+
+        :return: None
+        :rtype: None
+        """
         self._data[key] = self.convert_func(value)
 
     @overload
@@ -209,7 +323,7 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         :param other: Item(s) to insert.
         :param pre_process_func: Function that will preprocess the data,
             defaults to None
-        :param skip_conversion: Flag to skip conversion of items., defaults to False
+        :param skip_conversion: Flag to skip conversion of items, defaults to False
         :return: The StringDeque.
         """
         data: Sequence[object] | object = other
@@ -233,11 +347,25 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         return self
 
     def clear(self) -> None:
-        """Clear StringDeque."""
+        """Clear the data stored in the object.
+
+        This method clears all elements in the internal data storage.
+
+        :return: None
+        :rtype: None
+        """
         self._data.clear()
 
     def draw(self, index: int = -1) -> DataType:
-        """Draw element from Deque and return, defaults to last element."""
+        """Draw and remove an element from the object at the specified index.
+
+        :param index: The index of the element to be drawn and removed.
+            Default is -1 (last element).
+        :type index: int
+
+        :return: The drawn element from the object.
+        :rtype: DataType
+        """
         ret = self._data[index]
         del self._data[index]
         return ret
@@ -245,7 +373,7 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
 
 @beartype
 class StringDeque(StringDataDeque[str, Builtin_or_DefinesDunderStr]):
-    """Base class for a string Deque."""
+    """A class representing a StringDeque."""
 
     @overload
     def __init__(
@@ -268,7 +396,17 @@ class StringDeque(StringDataDeque[str, Builtin_or_DefinesDunderStr]):
         | None = None,
         sep: str = "",
     ) -> None:
-        """Initialize the StringDeque."""
+        """Initialize the object with the given data and separator.
+
+        :param data: A sequence of non-string objects, a string, or None.
+        :type data: Union[Sequence, str, None]
+
+        :param sep: Separator to use when joining the data elements.
+        :type sep: str
+
+        :return: None
+        :rtype: None
+        """
         super().__init__(convert_func=str, format_func=str, data=data, sep=sep)
 
 
@@ -300,7 +438,19 @@ class CircularStringDeque(StringDeque):
         | None = None,
         sep: str = "",
     ) -> None:
-        """Initialize the StringDeque."""
+        """Initialize CircularStringDeque with a limited size.
+
+        :param size: The maximum size of the data structure.
+        :type size: int
+        :param data: Initial data to populate the structure (optional).
+        :type data: SequenceNonStr[Builtin_or_DefinesDunderStr] |
+            Builtin_or_DefinesDunderStr | None
+        :param sep: Separator for data elements when initializing (optional).
+        :type sep: str
+
+        :return: None
+        :rtype: None
+        """
         super().__init__(data=data, sep=sep)
         self._size = size
         self._data = deque(self._data, maxlen=self._size)
@@ -308,7 +458,20 @@ class CircularStringDeque(StringDeque):
 
 @beartype
 class WORMStringDeque(StringDeque):
-    """Write once read many buffer."""
+    """A class representing a WORM (Write Once Read Many) String Deque.
+
+    This class extends StringDeque and implements WORM (Write Once Read Many)
+    functionality. It does not allow modification of existing items once they are added.
+
+    Note: The following methods are not implemented in WORMStringDeque and will raise
+        NotImplementedError:
+    - __setitem__: Setting items using indexing is not allowed.
+    - clear: Clearing all items from the deque is not allowed.
+    - __delitem__: Deleting items from the deque is not allowed.
+
+    :raises NotImplementedError: When trying to perform unsupported operations on
+        WORMStringDeque.
+    """
 
     @overload
     def __init__(
@@ -331,7 +494,18 @@ class WORMStringDeque(StringDeque):
         | None = None,
         sep: str = "",
     ) -> None:
-        """Initialize the WORMStringDeque."""
+        """Initialize the object with optional data and separator.
+
+        :param data: Optional data to initialize the object with.
+        :type data: SequenceNonStr[Builtin_or_DefinesDunderStr] |
+            Builtin_or_DefinesDunderStr | None
+
+        :param sep: Optional separator for the data.
+        :type sep: str
+
+        :return: None
+        :rtype: None
+        """
         super().__init__(data=data, sep=sep)
 
     def __setitem__(
@@ -339,14 +513,31 @@ class WORMStringDeque(StringDeque):
         key: SupportsIndex,
         value: Builtin_or_DefinesDunderStr,
     ) -> None:
-        """Set item at index."""
+        """Set the value for a key in the object.
+
+        :param key: The key to set the value for.
+        :type key: SupportsIndex
+
+        :param value: The value to set for the key.
+        :type value: Builtin_or_DefinesDunderStr
+
+        :return: None
+
+        :raise NotImplementedError: If the method is called and not implemented.
+        """
         msg = f"{self.__class__.__qualname__} does not implement {current_func_name()}"
         raise NotImplementedError(
             msg,
         )
 
     def clear(self) -> None:
-        """Clear not implemented."""
+        """Clear the object.
+
+        This method is not implemented and will raise a NotImplementedError with a
+            message indicating that the method is not implemented.
+
+        :raises NotImplementedError: Method is not implemented in the current class.
+        """
         msg = f"{self.__class__.__qualname__} does not implement {current_func_name()}"
         raise NotImplementedError(
             msg,
