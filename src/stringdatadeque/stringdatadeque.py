@@ -465,6 +465,7 @@ class WORMStringDeque(StringDeque):
 
     Note: The following methods are not implemented in WORMStringDeque and will raise
         NotImplementedError:
+
     - __setitem__: Setting items using indexing is not allowed.
     - clear: Clearing all items from the deque is not allowed.
     - __delitem__: Deleting items from the deque is not allowed.
