@@ -3,6 +3,7 @@ PACKAGE_SLUG := "src/stringdatadeque"
 export PYTHON_VERSION := if env("CI","false") != "false" { `python --version|cut -d" " -f2` } else { `cat .python-version` }
 PYTHON := if env("USE_SYSTEM_PYTHON", "false") != "false" { "python" } else { ".venv/bin/python" }
 PYTHON_ENV := if env("USE_SYSTEM_PYTHON", "false") != "false" { "" } else { "sh .venv/bin/activate &&" }
+NEWLINE:="$'\n'"
 # print list of commands
 help:
     @just --list --unsorted
@@ -122,3 +123,7 @@ update_dependencies_quiet:
 # Build package
 build: install
     {{PYTHON}} -m build
+
+# Create Git tag for release
+create_tag tag notes="":
+    git tag -a v{{tag}} -m "Release {{tag}} "{{NEWLINE}}" {{notes}})"
