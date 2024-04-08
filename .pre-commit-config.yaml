@@ -79,6 +79,14 @@ repos:
         fail_fast: true
   - repo: local
     hooks:
+      - id: pylint
+        name: "Python: Pylint code with Perflint"
+        entry: python -m pylint
+        language: system
+        types: [file, python]
+        args: [-rn, -sn, --load-plugins=perflint]
+  - repo: local
+    hooks:
       - id: python_file_name_check
         name: "Python: File name check"
         entry: "python ./check_names.py"

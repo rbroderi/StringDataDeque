@@ -1,5 +1,6 @@
 # ruff: noqa
 # type:ignore
+# pylint: skip-file
 # import sys
 
 # print(sys.path)

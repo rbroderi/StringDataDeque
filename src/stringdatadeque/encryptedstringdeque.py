@@ -34,6 +34,10 @@ class Base64Encoded(str):
 
     __slots__ = ("__name",)
 
+    def __init__(self) -> None:
+        """Initialize the base64encoded string."""
+        self.__name = ""
+
     @staticmethod
     def is_base64(sb: str | bytes) -> bool:
         """Check if the input string or bytes object is a valid Base64 encoded string.
@@ -227,10 +231,12 @@ class EncryptedStringDeque(StringDataDeque[RSAMessage, Builtin_or_DefinesDunderS
         :return: None
         :rtype: None
         """
+        self.session_key: bytes
+        self.enc_session_key: bytes
         self._data: deque[RSAMessage] = deque()
         self.public_key = public_key
         if isinstance(data, str):
-            data = [data]
+            data = (data,)
         con_func = partial(self._encrypt, public_key=self.public_key)
         super().__init__(
             convert_func=con_func,
