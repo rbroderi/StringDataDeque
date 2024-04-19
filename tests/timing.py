@@ -6,6 +6,7 @@ import timeit
 from collections import deque
 from functools import partial
 from pathlib import Path
+import random
 
 SCRIPTROOT = Path(__file__).parent.resolve()
 sys.path.append(str(SCRIPTROOT.parent / "src"))
@@ -17,6 +18,7 @@ import stringdatadeque  # noqa: E402
 def time(func):
     print(func.__name__)
     time_start = timeit.default_timer()
+    values_long = range(10000000)
     ret = func(values_long)
     # calculate the duration
     time_duration = timeit.default_timer() - time_start
@@ -28,28 +30,28 @@ def time(func):
 def as_str(values):
     temp = ""
     for i in values:
-        temp += f"{i},"
+        temp += f"{random.randint(0,1000)}"  # nosec: B311
     return temp[:-1]
 
 
 def as_list(values):
     temp = []
     for i in values:
-        temp.append(str(i))
+        temp.append(f"{random.randint(0,1000)}")  # nosec: B311
     return ",".join(temp)
 
 
 def as_deque(values):
     temp = deque()
     for i in values:
-        temp.append(str(i))
+        temp.append(f"{random.randint(0,1000)}")  # nosec: B311
     return ",".join(temp)
 
 
 def as_stringdeque(values):
     temp = stringdatadeque.StringDeque(sep=",")
     for i in values:
-        temp += i
+        temp += random.randint(0, 1000)  # nosec: B311
     return str(temp)
 
 
@@ -63,4 +65,4 @@ if __name__ == "__main__":
     funcs = (as_str, as_list, as_deque, as_stringdeque)
     for func in funcs:
         print(func.__name__)
-        print(min(timeit.Timer(partial(func, values)).repeat(10, 1)))
+        print(min(timeit.Timer(partial(func, values)).repeat(10, 2)))

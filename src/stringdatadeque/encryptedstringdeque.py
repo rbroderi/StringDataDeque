@@ -192,6 +192,8 @@ class EncryptedStringDeque(StringDataDeque[RSAMessage, Builtin_or_DefinesDunderS
     :type sep: str
     """
 
+    __slots__ = ("type", "public_key", "session_key", "enc_session_key", "_data")
+
     @staticmethod
     def __keep_encrypted(msg: RSAMessage) -> str:  # pragma: no cover
         """Keep the message encrypted.

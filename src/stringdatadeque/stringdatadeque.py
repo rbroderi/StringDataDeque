@@ -76,6 +76,8 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
     :type sep: str
     """
 
+    __slots__ = ("_data", "convert_func", "format_func", "sep")
+
     @overload
     def __init__(
         self,
@@ -375,6 +377,8 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
 class StringDeque(StringDataDeque[str, Builtin_or_DefinesDunderStr]):
     """A class representing a StringDeque."""
 
+    __slots__ = ()
+
     @overload
     def __init__(
         self,
@@ -413,6 +417,8 @@ class StringDeque(StringDataDeque[str, Builtin_or_DefinesDunderStr]):
 @beartype
 class CircularStringDeque(StringDeque):
     """A circular StringBuffer, overwrites once maxlen reached."""
+
+    __slots__ = ("_size",)
 
     @overload
     def __init__(
@@ -473,6 +479,8 @@ class WORMStringDeque(StringDeque):
     :raises NotImplementedError: When trying to perform unsupported operations on
         WORMStringDeque.
     """
+
+    __slots__ = ()
 
     @overload
     def __init__(

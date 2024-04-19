@@ -28,13 +28,17 @@ setup_autodoc:
 # Formatting
 #
 # Run all linting and fixes
-fixes: validate_pyproject ruff_fixes ruff_format_fixes dapperdata_fixes tomlsort_fixes docs pytest
+fixes: validate_pyproject ruff_fixes ruff_format_fixes pylint dapperdata_fixes tomlsort_fixes docs pytest
 
 _fixes_no_ruff: validate_pyproject dapperdata_fixes tomlsort_fixes docs pytest update_dependencies_quiet
 
 # Validate pyproject.toml format
 validate_pyproject:
     {{PYTHON}} -m validate_pyproject pyproject.toml
+
+# Run pylint
+pylint:
+   {{PYTHON}} -m pylint {{PACKAGE_SLUG}}
 
 # Run Ruff and fix
 ruff_fixes:
