@@ -7,6 +7,7 @@ from collections import deque
 from functools import partial
 from pathlib import Path
 import random
+import argparse
 
 SCRIPTROOT = Path(__file__).parent.resolve()
 sys.path.append(str(SCRIPTROOT.parent / "src"))
@@ -31,7 +32,7 @@ def as_str(values):
     temp = ""
     for i in values:
         temp += f"{random.randint(0,1000)}"  # nosec: B311
-    return temp[:-1]
+    return temp
 
 
 def as_list(values):
@@ -55,14 +56,30 @@ def as_stringdeque(values):
     return str(temp)
 
 
+def main() -> int:
+    try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            "--profile",
+            help="run in profile mode",
+            action="store_true",
+        )
+        args = parser.parse_args()
+        values = range(100000)
+        values_long = range(100000)
+        funcs = (
+            (as_stringdeque,)
+            if args.profile
+            else (as_str, as_list, as_deque, as_stringdeque)
+        )
+        for func in funcs:
+            print(func.__name__)
+            print(min(timeit.Timer(partial(func, values)).repeat(10, 5)))
+    except Exception as e:
+        print(e)
+        return 1
+    return 0
+
+
 if __name__ == "__main__":
-    # a = time(as_str)
-    # b = time(as_list)
-    # c = time(as_stringdeque)
-    # assert a == b == c
-    values = range(1000000)
-    values_long = range(1000000)
-    funcs = (as_str, as_list, as_deque, as_stringdeque)
-    for func in funcs:
-        print(func.__name__)
-        print(min(timeit.Timer(partial(func, values)).repeat(10, 2)))
+    raise SystemExit(main())

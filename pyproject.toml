@@ -38,7 +38,8 @@ dev = [
   "tox",
   "tox-pyenv-redux",
   "pylint",
-  "perflint"
+  "perflint",
+  "snakeviz"
 ]
 # pep725
 # [external]

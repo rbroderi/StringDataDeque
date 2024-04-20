@@ -40,7 +40,7 @@ nobeartype: Any = beartype(conf=BeartypeConf(strategy=BeartypeStrategy.O0))  # p
 #         return re.fullmatch(pattern, self)
 
 
-class LikeMatch(str):
+class InMatch(str):
     """A class representing a custom string type used for 'like' matching.
 
     :param pattern: Pattern string to match against.
@@ -157,7 +157,7 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         :return: The formatted string.
         :rtype: str
         """
-        match LikeMatch(format_spec):
+        match InMatch(format_spec):
             case "sep=":
                 old_sep, self.sep = (
                     self.sep,

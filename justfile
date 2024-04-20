@@ -24,6 +24,11 @@ pre-commit_install:
 setup_autodoc:
     sphinx-apidoc -f -o docs/source {{PACKAGE_SLUG}}
 
+# profiling
+profile:
+    python -m cProfile -s time -o timing.prof tests/timing.py --profile
+    snakeviz timing.prof
+
 #
 # Formatting
 #
