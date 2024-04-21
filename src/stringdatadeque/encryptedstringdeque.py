@@ -2,11 +2,8 @@
 
 import base64
 import binascii
-import dataclasses
 from collections import deque
 from collections.abc import Callable
-from dataclasses import dataclass
-from dataclasses import field
 from functools import partial
 
 try:
@@ -15,7 +12,7 @@ except ImportError:  # pragma: no cover
     from typing_extensions import Self  # pragma: no cover
 from typing import cast
 
-from beartype import beartype  # pyright: ignore[reportUnknownVariableType]
+from beartype import beartype
 from Crypto.Cipher import AES  # nosec: B413
 from Crypto.Cipher import PKCS1_OAEP  # nosec: B413
 from Crypto.PublicKey import (  # nosec: B413 #false positive as we are using pycryptome
@@ -34,9 +31,9 @@ class Base64Encoded(str):
 
     __slots__ = ("__name",)
 
-    def __init__(self) -> None:
+    def __init__(self, name_: str) -> None:
         """Initialize the base64encoded string."""
-        self.__name = ""
+        self.__name = name_
 
     @staticmethod
     def is_base64(sb: str | bytes) -> bool:
@@ -71,7 +68,7 @@ class Base64Encoded(str):
         """
         if instance is None:
             return self
-        return instance.__dict__[self.__name]
+        return getattr(instance, self.__name)
 
     def get_decoded(self, instance: "RSAMessage") -> bytes:
         """Get value base64 decoded.
@@ -82,7 +79,7 @@ class Base64Encoded(str):
         :return: The decoded message as bytes.
         :rtype: bytes
         """
-        return base64.b64decode(instance.__dict__[self.__name])
+        return base64.b64decode(getattr(instance, self.__name))
 
     def __set__(self, instance: "RSAMessage", value: str | bytes) -> None:
         """Set the value and encode as base64.
@@ -101,31 +98,21 @@ class Base64Encoded(str):
             return
         if isinstance(value, str):
             if self.is_base64(value):
-                instance.__dict__[self.__name] = value
+                setattr(instance, self.__name, value)
+                # instance.__dict__[self.__name] = value
             else:
-                instance.__dict__[self.__name] = base64.b64encode(
-                    value.encode("utf-8"),
-                ).decode("utf-8")
+                setattr(
+                    instance,
+                    self.__name,
+                    base64.b64encode(
+                        value.encode("utf-8"),
+                    ).decode("utf-8"),
+                )
         else:
-            instance.__dict__[self.__name] = base64.b64encode(value).decode("utf-8")
-
-    def __set_name__(self, owner: type, name: str) -> None:
-        """Set the name to a private dunder name.
-
-        :param owner: The class that owns the object.
-        :type owner: type
-
-        :param name: The name to set for the object.
-        :type name: str
-
-        :return: None
-        :rtype: None
-        """
-        self.__name = name
+            setattr(instance, self.__name, base64.b64encode(value).decode("utf-8"))
 
 
-@dataclass
-@beartype
+# @beartype errors?
 class RSAMessage:
     """A dataclass representing an RSA message.
 
@@ -139,31 +126,44 @@ class RSAMessage:
     :type ciphertext: str | bytes
     """
 
-    enc_session_key: str | bytes = field(default=Base64Encoded())
-    nonce: str | bytes = field(default=Base64Encoded())
-    tag: str | bytes = field(default=Base64Encoded())
-    ciphertext: str | bytes = field(default=Base64Encoded())
+    __slots__ = ("_enc_session_key", "_nonce", "_tag", "_ciphertext")
 
-    def __post_init__(self) -> None:
-        """Perform post-initialization checks for missing required arguments.
+    enc_session_key: str | bytes = Base64Encoded("_enc_session_key")
+    nonce: str | bytes = Base64Encoded("_nonce")
+    tag: str | bytes = Base64Encoded("_tag")
+    ciphertext: str | bytes = Base64Encoded("_ciphertext")
+
+    @beartype
+    def __init__(
+        self,
+        enc_session_key: str | bytes,
+        nonce: str | bytes,
+        tag: str | bytes,
+        ciphertext: str | bytes,
+    ) -> None:
+        """Initialize the object.
+
+        :param enc_session_key: The encrypted session key.
+        :type enc_session_key: str or bytes
+
+        :param nonce: The nonce value.
+        :type nonce: str or bytes
+
+        :param tag: The tag value.
+        :type tag: str or bytes
+
+        :param ciphertext: The encrypted ciphertext.
+        :type ciphertext: str or bytes
 
         :return: None
         :rtype: None
-
-        :raise TypeError: If any of the required arguments are missing.
         """
-        fields = dataclasses.fields(self)
-        count = 0
-        for the_field in fields:
-            if the_field.name not in self.__dict__:
-                count += 1
-        if count > 0:
-            msg = (
-                f"{self.__class__.__qualname__}.__init__() missing {count}"
-                " required arguments"
-            )
-            raise TypeError(msg)
+        self.enc_session_key = enc_session_key  # type: ignore[misc] # noqa: PLE0237
+        self.nonce = nonce  # type: ignore[misc] # noqa: PLE0237
+        self.tag = tag  # type: ignore[misc] # noqa: PLE0237
+        self.ciphertext = ciphertext  # type: ignore[misc] # noqa: PLE0237
 
+    @beartype
     def attribute_as_bytes(self, attribute_name: str) -> bytes:
         """Return the decoded attribute value as bytes.
 
@@ -175,6 +175,34 @@ class RSAMessage:
         """
         return cast(Base64Encoded, getattr(RSAMessage, attribute_name)).get_decoded(
             instance=self,
+        )
+
+    @beartype
+    def __str__(self) -> str:
+        """Return the string representation of the object.
+
+        :return: The string representation of the object.
+        :rtype: str
+        """
+        return f"{self.enc_session_key=}{self.nonce=}{self.tag=}{self.ciphertext=}"
+
+    @beartype
+    def __eq__(self, value: object) -> bool:
+        """Check if the object is equal to another object.
+
+        :param value: The object to compare to.
+        :type value: object
+
+        :return: True if the objects are equal, False otherwise.
+        :rtype: bool
+        """
+        if not isinstance(value, RSAMessage):
+            return False
+        return (
+            self.enc_session_key == value.enc_session_key
+            and self.nonce == value.nonce
+            and self.tag == value.tag
+            and self.ciphertext == value.ciphertext
         )
 
 

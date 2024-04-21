@@ -82,7 +82,7 @@ pytestvv:
 
 # Run pytest show strings
 pytest_loud:
-    {{PYTHON}} -m pytest -s --cov=./{{PACKAGE_SLUG}} --cov-report=term-missing tests
+    {{PYTHON}} -m pytest -vv -rA --cov=./{{PACKAGE_SLUG}} --cov-report=term-missing tests
 
 # Run ruff in check mode
 ruff_check:

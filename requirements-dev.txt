@@ -57,7 +57,7 @@ filelock==3.13.4
     #   tox
     #   virtualenv
 glom==23.5.0
-identify==2.5.35
+identify==2.5.36
     # via pre-commit
 idna==3.7
     # via requests
@@ -97,7 +97,7 @@ platformdirs==4.2.0
     #   pylint
     #   tox
     #   virtualenv
-pluggy==1.4.0
+pluggy==1.5.0
     # via
     #   pytest
     #   tox
