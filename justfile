@@ -14,7 +14,7 @@ install:
     @# $(PYTHON_VENV)
     {{ if env("USE_SYSTEM_PYTHON", "false") != "false" { "" } else { "python -m venv .venv" } }}
     @# pip
-    {{PYTHON}} -m pip install -e .[dev,optional]
+    {{PYTHON}} -m pip install -e .[dev,optional,docs]
 
 # Install pre-commit
 pre-commit_install:

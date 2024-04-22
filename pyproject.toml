@@ -27,12 +27,6 @@ dev = [
   "uv",
   "validate-pyproject",
   "packaging",
-  "Sphinx",
-  "sphinx-autodoc-typehints",
-  "sphinx-pyproject",
-  "sphinx-rtd-size",
-  "sphinx-rtd-theme ",
-  "autodocsumm",
   "snakeviz",
   "pre-commit",
   "tox",
@@ -48,6 +42,14 @@ dev = [
 # "virtual:compiler/cargo",
 # ]
 optional = ["pycryptodome"]
+docs = [
+  "Sphinx",
+  "sphinx-autodoc-typehints",
+  "sphinx-rtd-theme",
+  "sphinx-rtd-size",
+  "autodocsumm",
+  "sphinx-pyproject"
+]
 
 [tool.dapperdata]
 exclude_paths = [".venv", ".mypy_cache", ".git", ".vscode"]
