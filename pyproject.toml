@@ -48,7 +48,8 @@ docs = [
   "sphinx-rtd-theme",
   "sphinx-rtd-size",
   "autodocsumm",
-  "sphinx-pyproject"
+  "sphinx-pyproject",
+  "pycryptodome"
 ]
 
 [tool.dapperdata]
