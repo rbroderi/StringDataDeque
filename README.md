@@ -3,7 +3,7 @@
 Useful when building a string from data that can be converted into a string, in parts.
 
 ## Installation
-
+https://pypi.org/project/StringDataDeque/
 ```bash
 pip install StringDataDeque
 ```
