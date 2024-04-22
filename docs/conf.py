@@ -15,3 +15,18 @@ from sphinx_pyproject import SphinxConfig
 
 sys.path.insert(0, os.path.abspath("../src"))  # noqa: PTH100
 config = SphinxConfig("../pyproject.toml", globalns=globals())
+
+
+# def setup(app) -> None:
+#     """Set up the Sphinx application.
+
+#     Args:
+#     ----
+#         app: The Sphinx application object.
+
+#     Returns:
+#     -------
+#         None
+
+#     """
+#     app.add_css_file("source/custom.css")
