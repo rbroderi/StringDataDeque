@@ -11,7 +11,7 @@ attrs==23.2.0
 autodocsumm==0.2.12
 babel==2.14.0
     # via sphinx
-beartype==0.18.4
+beartype==0.18.5
 boltons==24.0.0
     # via
     #   face
