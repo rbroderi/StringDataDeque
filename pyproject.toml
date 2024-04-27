@@ -5,16 +5,12 @@ requires = ["setuptools>=67.0", "setuptools_scm[toml]>=7.1"]
 [project]
 authors = [{"name" = "R.Broderick"}]
 description = "Useful when building a string from data that can be converted into a string, in parts."
-version = "1.1.1"
+version = "1.1.2"
 license = {"file" = "LICENSE"}
 name = "StringDataDeque"
 readme = {file = "README.md", content-type = "text/markdown"}
 dependencies = ["beartype", "typing-extensions; python_version < '3.12'"]
 requires-python = ">=3.10.0"
-
-[project.urls]
-homepage = "https://github.com/rbroderi/StringDataDeque"
-documentation = "https://rbroderi.github.io/StringDataDeque/"
 
 [project.optional-dependencies]
 dev = [
@@ -55,6 +51,10 @@ docs = [
   "sphinx-pyproject",
   "pycryptodome"
 ]
+
+[project.urls]
+homepage = "https://github.com/rbroderi/StringDataDeque"
+documentation = "https://rbroderi.github.io/StringDataDeque/"
 
 [tool.dapperdata]
 exclude_paths = [".venv", ".mypy_cache", ".git", ".vscode"]

@@ -24,6 +24,11 @@ pre-commit_install:
 setup_autodoc:
     sphinx-apidoc -f -o docs/source {{PACKAGE_SLUG}}
 
+# copy as template
+copy_as_template DEST:
+    rsync -r --exclude .mypy_cache --exclude .pytest_cache --exclude .ruff_cache --exclude .tox --exclude .venv --exclude StringDataDeque* --exclude .git --exclude stringdatadeque* ./ {{DEST}}
+    cd {{DEST}} && git init . && git commit --allow-empty -m 'Make initial root commit'
+
 # profiling
 profile:
     python -m cProfile -s time -o timing.prof tests/timing.py --profile
