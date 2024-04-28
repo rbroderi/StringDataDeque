@@ -62,6 +62,12 @@ repos:
     hooks:
       - id: pycln
         name: "Python: remove unused imports."
+  - repo: https://github.com/rbroderi/precommithooks
+    rev: v1.0.1
+    hooks:
+      - id: python_file_name_check
+        name: "Python: File name check"
+        args: ["--ignore-test-files"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: v0.3.5
@@ -85,15 +91,6 @@ repos:
         language: system
         types: [file, python]
         args: [-rn, -sn, --load-plugins=perflint]
-  - repo: local
-    hooks:
-      - id: python_file_name_check
-        name: "Python: File name check"
-        entry: "python ./check_names.py"
-        language: python
-        pass_filenames: true
-        types: [file, python]
-        verbose: false
   - repo: https://github.com/asottile/add-trailing-comma
     rev: v3.1.0
     hooks:

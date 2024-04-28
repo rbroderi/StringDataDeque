@@ -90,7 +90,7 @@ pyproject-api==1.6.1
     # via tox
 pyproject-hooks==1.0.0
     # via build
-pytest==8.1.2
+pytest==8.2.0
     # via
     #   pytest-cov
     #   pytest-pretty
@@ -132,7 +132,7 @@ typing-extensions==4.11.0
     #   pydantic
     #   pydantic-core
     #   typer
-uv==0.1.38
+uv==0.1.39
 validate-pyproject==0.16
 virtualenv==20.26.0
     # via
