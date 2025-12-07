@@ -1,3 +1,4 @@
+set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 set ignore-comments := true
 
 PACKAGE_SLUG := "src/stringdatadeque"
@@ -8,17 +9,21 @@ help:
 
 # install into the venv
 install:
-    export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"; \
-    if ! command -v uv >/dev/null 2>&1; then \
-        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null; \
-        export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"; \
-    fi
-    @# $(PYTHON_PYENV)
-    {{ if env("CI", "false") != "false" { "" } else { "pyenv install --skip-existing $PYTHON_VERSION " } }}
-    @# $(PYTHON_VENV)
-    {{ if env("USE_SYSTEM_PYTHON", "false") != "false" { "" } else { "python -m venv .venv" } }}
-    @# pip
-    PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH" uv run python -m pip install -e .[dev,optional,docs]
+    {{ if env("OS", "") == "Windows_NT" { ":_install_windows" } else { ":_install_posix" } }}
+
+_install_windows:
+    $env:PATH = "$HOME/.local/bin;$HOME/.cargo/bin;$env:PATH";
+    if (-not (Get-Command uv -ErrorAction SilentlyContinue)) { Invoke-RestMethod -Uri "https://astral.sh/uv/install.ps1" | Invoke-Expression; $env:PATH = "$HOME/.local/bin;$HOME/.cargo/bin;$env:PATH"; }
+    if (($env:CI -eq $null) -or ($env:CI -eq "false")) { if ($env:PYTHON_VERSION) { pyenv install --skip-existing $env:PYTHON_VERSION } }
+    if (($env:USE_SYSTEM_PYTHON -eq $null) -or ($env:USE_SYSTEM_PYTHON -eq "false")) { python -m venv .venv }
+    uv run python -m pip install -e .[dev,optional,docs]
+
+_install_posix:
+    export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+    if ! command -v uv >/dev/null 2>&1; then curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null; export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"; fi
+    if [ "${CI:-false}" = "false" ] && [ -n "${PYTHON_VERSION:-}" ]; then pyenv install --skip-existing "${PYTHON_VERSION}"; fi
+    if [ "${USE_SYSTEM_PYTHON:-false}" = "false" ]; then python -m venv .venv; fi
+    uv run python -m pip install -e .[dev,optional,docs]
 
 # Install pre-commit
 pre-commit_install:
@@ -67,7 +72,7 @@ dapperdata_fixes:
 
 # Run Tomlsort fixes
 tomlsort_fixes:
-    uv run toml-sort `find . -not -path "./.venv/*" -not -path "./.tox/*" -name "*.toml"` -i
+    uv run python scripts/toml_sort_runner.py --in-place
 
 # Generate Docs
 docs:
@@ -110,7 +115,7 @@ dapperdata_check:
 
 # Run tomlsort_check
 tomlsort_check:
-    uv run toml-sort `find . -not -path "./.venv/*" -not -path "./.tox/*" -name "*.toml"` --check
+    uv run python scripts/toml_sort_runner.py
 
 #
 # Dependencies

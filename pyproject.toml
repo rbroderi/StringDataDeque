@@ -10,7 +10,7 @@ license = {"file" = "LICENSE"}
 name = "StringDataDeque"
 readme = {file = "README.md", content-type = "text/markdown"}
 dependencies = [
-    "beartype",
+  "beartype"
 ]
 requires-python = ">=3.13.0"
 classifiers = [
@@ -41,10 +41,8 @@ dev = [
   "pylint",
   "perflint",
   "snakeviz",
-  "pip-audit",
+  "pip-audit"
 ]
-
-
 optional = ["pycryptodome"]
 docs = [
   "mkdocs",
@@ -56,14 +54,11 @@ docs = [
 homepage = "https://github.com/rbroderi/StringDataDeque"
 documentation = "https://rbroderi.github.io/StringDataDeque/"
 
+[tool.dapperdata]
+exclude_paths = [".venv", ".mypy_cache", ".git", ".vscode"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/stringdatadeque"]
-
-
-
-[tool.dapperdata]
-exclude_paths = [".venv", ".mypy_cache", ".git", ".vscode"]
 
 [tool.pylint.format]
 max-line-length = 200
@@ -185,7 +180,7 @@ pythonpath = ["src"]
 [tool.ruff]
 exclude = [
   ".venv",
-  "./stringdatadeque/_version.py",
+  "./stringdatadeque/_version.py"
 ]
 line-length = 88
 indent-width = 4
