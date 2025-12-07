@@ -9,7 +9,7 @@ help:
 
 # install into the venv
 install:
-    {{ if env("OS", "") == "Windows_NT" { ":_install_windows" } else { ":_install_posix" } }}
+    {{ if env("OS", "") == "Windows_NT" { "just _install_windows" } else { "just _install_posix" } }}
 
 _install_windows:
     $env:PATH = "$HOME/.local/bin;$HOME/.cargo/bin;$env:PATH";
