@@ -23,12 +23,14 @@ def _discover_files() -> list[str]:
 
 
 def _run_tomlsort(extra_args: Sequence[str]) -> int:
+    """Invoke ``toml-sort`` with the provided arguments."""
     cmd = ["toml-sort", *extra_args]
-    completed = subprocess.run(cmd, check=False)
+    completed = subprocess.run(cmd, check=False)  # noqa: S603
     return completed.returncode
 
 
 def main() -> int:
+    """Parse CLI args and run ``toml-sort`` in check or in-place mode."""
     parser = argparse.ArgumentParser(description="Run toml-sort across the repo")
     parser.add_argument(
         "--in-place",

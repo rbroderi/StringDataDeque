@@ -8,24 +8,27 @@ from typing import Final
 
 from .stringdatadeque import CircularStringDeque
 from .stringdatadeque import StringDataDeque
-from .stringdatadeque import StringDeque as _PureStringDeque
+from .stringdatadeque import StringDeque
 from .stringdatadeque import WORMStringDeque
 
-try:
-    from .encryptedstringdeque import EncryptedStringDeque as _EncryptedStringDeque
-    from .encryptedstringdeque import RSAMessage as _RSAMessage
-except ModuleNotFoundError:  # pragma: no cover - optional dependency
-    _EncryptedStringDeque = None  # type: ignore[assignment]
-    _RSAMessage = None  # type: ignore[assignment]
+if TYPE_CHECKING:  # pragma: no cover - typing helper
+    from .encryptedstringdeque import EncryptedStringDeque
+    from .encryptedstringdeque import RSAMessage
+else:  # pragma: no cover - runtime optional import
+    try:
+        from .encryptedstringdeque import EncryptedStringDeque
+        from .encryptedstringdeque import RSAMessage
+    except ModuleNotFoundError:
+        EncryptedStringDeque = None  # type: ignore[assignment]
+        RSAMessage = None  # type: ignore[assignment]
 
 USING_PURE_PYTHON: Final[bool] = True
 
-StringDeque = _PureStringDeque
-PureStringDeque = _PureStringDeque
-EncryptedStringDeque = _EncryptedStringDeque
-RSAMessage = _RSAMessage
+PureStringDeque = StringDeque
 
-if EncryptedStringDeque is None:  # pragma: no cover - optional dependency
+if (
+    not TYPE_CHECKING
+) and EncryptedStringDeque is None:  # pragma: no cover - optional dependency
     _warnings.warn(
         "PyCryptodome required for EncryptedStringDeque",
         ImportWarning,
@@ -33,11 +36,6 @@ if EncryptedStringDeque is None:  # pragma: no cover - optional dependency
     )
     EncryptedStringDeque = None  # type: ignore[assignment]
     RSAMessage = None  # type: ignore[assignment]
-
-if TYPE_CHECKING:  # pragma: no cover - typing helper
-    from .stringdatadeque import StringDeque as _TypingStringDeque
-
-    StringDeque = _TypingStringDeque
 
 __all__ = [
     "USING_PURE_PYTHON",

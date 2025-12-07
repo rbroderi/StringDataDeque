@@ -7,6 +7,7 @@ from stringdatadeque import StringDeque
 
 
 def main() -> None:
+    """Demonstrate the high-level ``StringDeque`` APIs."""
     deque = StringDeque(sep=" | ")
     deque += "hello"
     deque = deque + "world"

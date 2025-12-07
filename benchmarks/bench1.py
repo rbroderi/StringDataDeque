@@ -23,19 +23,23 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from time import perf_counter
+from typing import TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:  # pragma: no cover - typing helper
     from stringdatadeque import StringDeque
-except ModuleNotFoundError:  # pragma: no cover - convenience for direct execution
-    _PROJECT_ROOT = Path(__file__).resolve().parents[1]
-    _SRC_PATH = _PROJECT_ROOT / "src"
-    if _SRC_PATH.exists():
-        sys.path.insert(0, str(_SRC_PATH))
-        from stringdatadeque import StringDeque  # type: ignore
-    else:  # Fall back to the original error if the repo layout is unexpected.
-        raise
+else:  # pragma: no cover - convenience for direct execution
+    try:
+        from stringdatadeque import StringDeque
+    except ModuleNotFoundError:
+        _PROJECT_ROOT = Path(__file__).resolve().parents[1]
+        _SRC_PATH = _PROJECT_ROOT / "src"
+        if _SRC_PATH.exists():
+            sys.path.insert(0, str(_SRC_PATH))
+            from stringdatadeque import StringDeque
+        else:  # Fall back to the original error if the repo layout is unexpected.
+            raise
 
-# Type alias for the benchmark callables – each builder receives the payload and
+# Type alias for the benchmark callables - each builder receives the payload and
 # separator, then returns the final formatted string so work is not optimized
 # away by Python.
 BenchFunc = Callable[[Sequence[str], str], str]
@@ -43,6 +47,8 @@ BenchFunc = Callable[[Sequence[str], str], str]
 
 @dataclass
 class BenchResult:
+    """Container for a single benchmark result."""
+
     label: str
     avg_s: float
     best_s: float
@@ -50,10 +56,11 @@ class BenchResult:
 
 
 def _make_payload(size: int, length: int, seed: int) -> list[str]:
+    """Return deterministic pseudo-random payload chunks."""
     rng = seed & 0xFFFFFFFF
     charset = string.ascii_letters + string.digits
     payload: list[str] = []
-    for idx in range(size):
+    for _ in range(size):
         rng = (1103515245 * rng + 12345) & 0x7FFFFFFF
         chunk = [charset[(rng >> shift) % len(charset)] for shift in range(length)]
         payload.append("".join(chunk))
@@ -63,6 +70,7 @@ def _make_payload(size: int, length: int, seed: int) -> list[str]:
 def _bench_case(
     label: str, func: BenchFunc, payload: Sequence[str], sep: str, iterations: int
 ) -> BenchResult:
+    """Time ``func`` with ``payload`` and return summary statistics."""
     samples: list[float] = []
     total_chars = sum(len(item) for item in payload) + max(len(payload) - 1, 0) * len(
         sep
@@ -81,6 +89,7 @@ def _bench_case(
 
 
 def bench_stringdeque(payload: Sequence[str], sep: str) -> str:
+    """Benchmark using ``StringDeque`` as the builder."""
     dq = StringDeque(sep=sep)
     for chunk in payload:
         dq += chunk
@@ -88,13 +97,13 @@ def bench_stringdeque(payload: Sequence[str], sep: str) -> str:
 
 
 def bench_list_append_then_join(payload: Sequence[str], sep: str) -> str:
-    parts: list[str] = []
-    for chunk in payload:
-        parts.append(chunk)
+    """Benchmark using ``list`` append then ``str.join``."""
+    parts = list(payload)
     return sep.join(parts)
 
 
 def bench_stringio(payload: Sequence[str], sep: str) -> str:
+    """Benchmark repeated writes to :class:`io.StringIO`."""
     buffer = io.StringIO()
     last = len(payload) - 1
     for idx, chunk in enumerate(payload):
@@ -105,6 +114,7 @@ def bench_stringio(payload: Sequence[str], sep: str) -> str:
 
 
 def bench_plus_equal(payload: Sequence[str], sep: str) -> str:
+    """Benchmark naive ``+=`` concatenation."""
     result = ""
     for idx, chunk in enumerate(payload):
         if idx:
@@ -117,6 +127,7 @@ def bench_plus_equal(payload: Sequence[str], sep: str) -> str:
 
 
 def parse_args(argv: Sequence[str]) -> argparse.Namespace:
+    """Parse CLI arguments for the benchmark harness."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--size",
@@ -140,6 +151,7 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """Entry point that orchestrates payload generation and reporting."""
     args = parse_args(argv or sys.argv[1:])
     payload = tuple(_make_payload(args.size, args.length, args.seed))
 

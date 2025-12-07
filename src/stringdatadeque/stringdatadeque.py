@@ -3,14 +3,10 @@
 import sys
 from collections import deque
 from collections.abc import Callable
+from collections.abc import Sequence
 from typing import Any
 from typing import Generic
-
-try:
-    from typing import Self
-except ImportError:  # pragma: no cover
-    from typing_extensions import Self  # pragma: no cover
-from collections.abc import Sequence
+from typing import Self
 from typing import SupportsIndex
 from typing import TypeVar
 from typing import cast
@@ -49,6 +45,7 @@ class InMatch(str):
     """
 
     __slots__ = ()
+    __hash__ = str.__hash__
 
     def __eq__(self, pattern: object) -> bool:
         """Override eq method to perform a 'like' match.
@@ -62,7 +59,7 @@ class InMatch(str):
 
 # NOTE skip type checking on _add and _or for speed
 @beartype
-class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
+class StringDataDeque(Generic[DataType, ConvertibleToDataType]):  # noqa: UP046
     """A generic class representing a deque of data that can be formatted as a string.
 
     :param convert_func: A function to convert data to a specific data type.

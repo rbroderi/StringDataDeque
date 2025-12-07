@@ -1,5 +1,5 @@
-# ruff: noqa
-# type:ignore
+# ruff: noqa: ANN001, ANN201, B007, BLE001, D100, D103, F841, I001, PERF401, S311
+# mypy: ignore-errors
 # pylint: skip-file
 import sys
 import timeit
@@ -31,21 +31,21 @@ def time(func):
 def as_str(values):
     temp = ""
     for i in values:
-        temp += f"{random.randint(0,1000)}"  # nosec: B311
+        temp += f"{random.randint(0, 1000)}"  # nosec: B311
     return temp
 
 
 def as_list(values):
     temp = []
     for i in values:
-        temp.append(f"{random.randint(0,1000)}")  # nosec: B311
+        temp.append(f"{random.randint(0, 1000)}")  # nosec: B311
     return ",".join(temp)
 
 
 def as_deque(values):
     temp = deque()
     for i in values:
-        temp.append(f"{random.randint(0,1000)}")  # nosec: B311
+        temp.append(f"{random.randint(0, 1000)}")  # nosec: B311
     return ",".join(temp)
 
 

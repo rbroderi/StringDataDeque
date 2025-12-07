@@ -5,11 +5,7 @@ import binascii
 from collections import deque
 from collections.abc import Callable
 from functools import partial
-
-try:
-    from typing import Self
-except ImportError:  # pragma: no cover
-    from typing_extensions import Self  # pragma: no cover
+from typing import Self
 from typing import cast
 
 from beartype import beartype
@@ -126,7 +122,8 @@ class RSAMessage:
     :type ciphertext: str | bytes
     """
 
-    __slots__ = ("_enc_session_key", "_nonce", "_tag", "_ciphertext")
+    __slots__ = ("_ciphertext", "_enc_session_key", "_nonce", "_tag")
+    __hash__ = None
 
     enc_session_key: str | bytes = Base64Encoded("_enc_session_key")
     nonce: str | bytes = Base64Encoded("_nonce")
@@ -173,7 +170,7 @@ class RSAMessage:
         :return: The decoded attribute value as bytes.
         :rtype: bytes
         """
-        return cast(Base64Encoded, getattr(RSAMessage, attribute_name)).get_decoded(
+        return cast("Base64Encoded", getattr(RSAMessage, attribute_name)).get_decoded(
             instance=self,
         )
 
@@ -220,7 +217,7 @@ class EncryptedStringDeque(StringDataDeque[RSAMessage, Builtin_or_DefinesDunderS
     :type sep: str
     """
 
-    __slots__ = ("type", "public_key", "session_key", "enc_session_key", "_data")
+    __slots__ = ("_data", "enc_session_key", "public_key", "session_key", "type")
 
     @staticmethod
     def __keep_encrypted(msg: RSAMessage) -> str:  # pragma: no cover

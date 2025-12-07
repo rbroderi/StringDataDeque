@@ -1,5 +1,5 @@
-# ruff: noqa
-# type:ignore
+# ruff: noqa: ANN001, ANN201, D100, D103, E721, N802, N806, PLR2004, PT001, RET504, S101
+# mypy: ignore-errors
 # pylint: skip-file
 # import sys
 
