@@ -8,12 +8,17 @@ help:
 
 # install into the venv
 install:
+    export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"; \
+    if ! command -v uv >/dev/null 2>&1; then \
+        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null; \
+        export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"; \
+    fi
     @# $(PYTHON_PYENV)
     {{ if env("CI", "false") != "false" { "" } else { "pyenv install --skip-existing $PYTHON_VERSION " } }}
     @# $(PYTHON_VENV)
     {{ if env("USE_SYSTEM_PYTHON", "false") != "false" { "" } else { "python -m venv .venv" } }}
     @# pip
-    uv run python -m pip install -e .[dev,optional,docs]
+    PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH" uv run python -m pip install -e .[dev,optional,docs]
 
 # Install pre-commit
 pre-commit_install:
