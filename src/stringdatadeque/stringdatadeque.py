@@ -56,7 +56,7 @@ class InMatch(str):
         :param pattern: Pattern string to match against.
         :return: True if pattern matches.
         """
-        pattern = cast(str, pattern)
+        pattern = cast("str", pattern)
         return pattern in self
 
 
@@ -130,11 +130,13 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         self.format_func = format_func
         if data is not None:
             if isinstance(data, str) or not isinstance(data, Sequence):
-                self._data.append(self.convert_func(cast(ConvertibleToDataType, data)))
+                self._data.append(
+                    self.convert_func(cast("ConvertibleToDataType", data))
+                )
             else:
                 data_mapped = map(
                     self.convert_func,
-                    cast(Sequence[ConvertibleToDataType], data),
+                    cast("Sequence[ConvertibleToDataType]", data),
                 )
                 self._data.extend(data_mapped)
         self.sep = sep
@@ -334,16 +336,16 @@ class StringDataDeque(Generic[DataType, ConvertibleToDataType]):
         if pre_process_func is None:
             if skip_conversion:
                 # if conversion is skipped then data must be of datatype
-                self._data.extend(cast(Sequence[DataType], data))
+                self._data.extend(cast("Sequence[DataType]", data))
             else:
                 # if not preprocessing data must be of type convertabletodatatype
                 data_mapped: map[Any] = map(
                     self.convert_func,
-                    cast(Sequence[ConvertibleToDataType], data),
+                    cast("Sequence[ConvertibleToDataType]", data),
                 )
                 self._data.extend(data_mapped)
         else:
-            data_mapped = map(pre_process_func, cast(Sequence[T], data))
+            data_mapped = map(pre_process_func, cast("Sequence[T]", data))
             data_mapped = map(self.convert_func, data_mapped)
             self._data.extend(data_mapped)
         return self

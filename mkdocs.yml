@@ -1,0 +1,22 @@
+site_name: StringDataDeque
+site_description: "Fast, pure-Python string builders backed by deques"
+repo_url: https://github.com/rbroderi/StringDataDeque
+site_dir: site
+theme:
+  name: material
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - src
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Usage: usage.md
+  - API: api.md

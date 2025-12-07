@@ -56,7 +56,7 @@ repos:
     hooks:
       - id: pyupgrade
         name: "Python: upgrade syntax"
-        args: [--py310-plus]
+        args: [--py313-plus]
   - repo: https://github.com/hadialqattan/pycln
     rev: v2.4.0
     hooks:
