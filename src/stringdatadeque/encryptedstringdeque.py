@@ -5,6 +5,8 @@ import binascii
 from collections import deque
 from collections.abc import Callable
 from functools import partial
+from typing import Any
+from typing import ClassVar
 from typing import Self
 from typing import cast
 
@@ -123,7 +125,7 @@ class RSAMessage:
     """
 
     __slots__ = ("_ciphertext", "_enc_session_key", "_nonce", "_tag")
-    __hash__ = None
+    __hash__: ClassVar[Any] = None
 
     enc_session_key: str | bytes = Base64Encoded("_enc_session_key")
     nonce: str | bytes = Base64Encoded("_nonce")
