@@ -1,22 +1,51 @@
-"""Main package for stringdatadeque."""
+"""Public entry point for StringDataDeque (pure Python implementation)."""
 
-from .stringdatadeque import CircularStringDeque as CircularStringDeque
-from .stringdatadeque import StringDataDeque as StringDataDeque
-from .stringdatadeque import StringDeque as StringDeque
-from .stringdatadeque import WORMStringDeque as WORMStringDeque
+from __future__ import annotations
 
-# PyCryptodome required for EncryptStringDeque
+import warnings as _warnings
+from typing import TYPE_CHECKING
+from typing import Final
+
+from .stringdatadeque import CircularStringDeque
+from .stringdatadeque import StringDataDeque
+from .stringdatadeque import StringDeque as _PureStringDeque
+from .stringdatadeque import WORMStringDeque
+
 try:
-    import Crypto as __Crypto  # noqa: F401 #pyright: ignore[reportUnusedImport]
+    from .encryptedstringdeque import EncryptedStringDeque as _EncryptedStringDeque
+    from .encryptedstringdeque import RSAMessage as _RSAMessage
+except ModuleNotFoundError:  # pragma: no cover - optional dependency
+    _EncryptedStringDeque = None  # type: ignore[assignment]
+    _RSAMessage = None  # type: ignore[assignment]
 
-    from .encryptedstringdeque import EncryptedStringDeque as EncryptedStringDeque
-    from .encryptedstringdeque import RSAMessage as RSAMessage
-except ModuleNotFoundError:
-    import warnings as __warnings
+USING_PURE_PYTHON: Final[bool] = True
 
-    __warnings.warn(
+StringDeque = _PureStringDeque
+PureStringDeque = _PureStringDeque
+EncryptedStringDeque = _EncryptedStringDeque
+RSAMessage = _RSAMessage
+
+if EncryptedStringDeque is None:  # pragma: no cover - optional dependency
+    _warnings.warn(
         "PyCryptodome required for EncryptedStringDeque",
         ImportWarning,
-        stacklevel=0,
+        stacklevel=2,
     )
-    del __warnings
+    EncryptedStringDeque = None  # type: ignore[assignment]
+    RSAMessage = None  # type: ignore[assignment]
+
+if TYPE_CHECKING:  # pragma: no cover - typing helper
+    from .stringdatadeque import StringDeque as _TypingStringDeque
+
+    StringDeque = _TypingStringDeque
+
+__all__ = [
+    "USING_PURE_PYTHON",
+    "CircularStringDeque",
+    "EncryptedStringDeque",
+    "PureStringDeque",
+    "RSAMessage",
+    "StringDataDeque",
+    "StringDeque",
+    "WORMStringDeque",
+]

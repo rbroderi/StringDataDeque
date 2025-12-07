@@ -1,6 +1,6 @@
 [build-system]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools>=67.0", "wheel"]
 
 [project]
 authors = [{"name" = "R.Broderick"}]
@@ -9,14 +9,15 @@ version = "1.2.1"
 license = {"file" = "LICENSE"}
 name = "StringDataDeque"
 readme = {file = "README.md", content-type = "text/markdown"}
-dependencies = ["beartype", "typing-extensions; python_version < '3.12'"]
+dependencies = [
+    "beartype",
+    "typing-extensions; python_version < '3.12'",
+]
 requires-python = ">=3.10.0"
 classifiers = [
   "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12"
+  "Programming Language :: Python :: 3.13"
 ]
 
 [project.optional-dependencies]
@@ -41,14 +42,10 @@ dev = [
   "pylint",
   "perflint",
   "snakeviz",
-  "pip-audit"
+  "pip-audit",
 ]
-# pep725
-# [external]
-# build-requires = [
-# "virtual:compiler/rust",
-# "virtual:compiler/cargo",
-# ]
+
+
 optional = ["pycryptodome"]
 docs = [
   "Sphinx",
@@ -63,6 +60,19 @@ docs = [
 [project.urls]
 homepage = "https://github.com/rbroderi/StringDataDeque"
 documentation = "https://rbroderi.github.io/StringDataDeque/"
+
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+stringdatadeque = ["py.typed"]
 
 [tool.dapperdata]
 exclude_paths = [".venv", ".mypy_cache", ".git", ".vscode"]
@@ -185,7 +195,10 @@ disable = [
 pythonpath = ["src"]
 
 [tool.ruff]
-exclude = [".venv", "./stringdatadeque/_version.py"]
+exclude = [
+  ".venv",
+  "./stringdatadeque/_version.py",
+]
 line-length = 88
 indent-width = 4
 target-version = "py310"
@@ -243,16 +256,6 @@ unfixable = []
 
 [tool.ruff.lint.isort]
 force-single-line = true
-
-[tool.setuptools.dynamic]
-readme = {file = ["README.md"]}
-
-[tool.setuptools.package-data]
-library = ["py.typed"]
-
-[tool.setuptools.packages.find]
-exclude = ["docs*", "tests*"]
-where = ["src"]
 
 [tool.sphinx-pyproject]
 # -- General configuration ---------------------------------------------------

@@ -11,10 +11,34 @@ StringDataDeque
 
 Useful when building a string from data that can be converted into a string, in parts.
 
+## Layout
+
+- `src/stringdatadeque/` – The pure-Python package containing the public API and implementation.
+- `examples/` – Small scripts that show common usage patterns.
+- `tests/` – Integration and regression tests that guard the API surface.
+
+`import stringdatadeque` exposes a `USING_PURE_PYTHON` flag for backwards compatibility. It is always set to ``True`` now that the package no longer ships a native extension.
+
 ## Installation
 https://pypi.org/project/StringDataDeque/
 ```bash
 pip install StringDataDeque
+```
+
+## Local development
+
+This project is pure Python, so the usual editable install flow works everywhere:
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate  # PowerShell: .venv\Scripts\Activate.ps1
+pip install -e .[dev,optional,docs]
+```
+
+To build a distributable wheel:
+
+```bash
+uv run python -m build
 ```
 
 ## Uses
